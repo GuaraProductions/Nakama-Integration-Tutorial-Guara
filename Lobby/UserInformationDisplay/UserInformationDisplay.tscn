@@ -1,6 +1,6 @@
 [gd_scene load_steps=6 format=3 uid="uid://cvedwg86rsyp2"]
 
-[ext_resource type="Script" path="res://Lobby/UserInformationDisplay/UserInformationDisplay.gd" id="1_gldpw"]
+[ext_resource type="Script" uid="uid://c3sqlq6m122n3" path="res://Lobby/UserInformationDisplay/UserInformationDisplay.gd" id="1_gldpw"]
 [ext_resource type="StyleBox" uid="uid://dqy54jim8vxkk" path="res://Styles/DarkBackgroundLabel.tres" id="1_k82p0"]
 
 [sub_resource type="Theme" id="Theme_1nxb0"]

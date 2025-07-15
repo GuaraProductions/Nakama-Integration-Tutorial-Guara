@@ -1,6 +1,6 @@
 [gd_scene load_steps=2 format=3 uid="uid://xq36w5vrpfwb"]
 
-[ext_resource type="Script" path="res://Authentication/RegisterPanel/RegisterPanel.gd" id="1_ulfat"]
+[ext_resource type="Script" uid="uid://0jxqc0dor0yj" path="res://Authentication/RegisterPanel/RegisterPanel.gd" id="1_ulfat"]
 
 [node name="RegisterPanel" type="PanelContainer"]
 size_flags_horizontal = 0

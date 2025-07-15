@@ -7,10 +7,11 @@ extends PanelContainer
 @onready var grid = $VBox/Grid
 @onready var button = $VBox/HBox/Button
 
-func update_user_info(user: NakamaAPI.ApiUser) -> void:
+func update_user_info(user: NakamaAPI.ApiUser, 
+					  p_email: String = "") -> void:
 	username.text = user.username
 	display_name.text = user.display_name
-	email.text = ""
+	email.text = p_email
 
 func _on_button_pressed() -> void:
 	grid.visible = not grid.visible

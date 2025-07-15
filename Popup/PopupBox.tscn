@@ -1,0 +1,30 @@
+[gd_scene load_steps=2 format=3 uid="uid://32gcwea4fq4t"]
+
+[ext_resource type="Script" uid="uid://c4f6uiudk6wqv" path="res://Popup/PopupBox.gd" id="1_de25d"]
+
+[node name="Popup" type="Window"]
+auto_translate_mode = 1
+size = Vector2i(250, 150)
+min_size = Vector2i(250, 150)
+script = ExtResource("1_de25d")
+
+[node name="-" type="VBoxContainer" parent="."]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Description" type="Label" parent="-"]
+layout_mode = 2
+size_flags_vertical = 3
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Button" type="Button" parent="-"]
+layout_mode = 2
+text = "Ok"
+
+[connection signal="about_to_popup" from="." to="." method="_on_about_to_popup"]
+[connection signal="close_requested" from="." to="." method="_on_close_requested"]
+[connection signal="pressed" from="-/Button" to="." method="_on_button_pressed"]

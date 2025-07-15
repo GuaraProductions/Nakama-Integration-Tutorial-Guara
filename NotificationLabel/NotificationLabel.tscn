@@ -1,7 +1,7 @@
 [gd_scene load_steps=4 format=3 uid="uid://drftmonotxben"]
 
 [ext_resource type="StyleBox" uid="uid://bmnm3alcou5sn" path="res://NotificationLabel/RedDialog.tres" id="1_4xtb5"]
-[ext_resource type="Script" path="res://NotificationLabel/NotificationLabel.gd" id="1_8sc04"]
+[ext_resource type="Script" uid="uid://c6xkdiek6s4qq" path="res://NotificationLabel/NotificationLabel.gd" id="1_8sc04"]
 [ext_resource type="StyleBox" uid="uid://dp30gd7s0wc2n" path="res://NotificationLabel/GreenDialog.tres" id="2_3k1ls"]
 
 [node name="NotificationLabel" type="Label"]

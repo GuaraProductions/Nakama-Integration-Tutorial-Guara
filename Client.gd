@@ -15,7 +15,11 @@ var chatChannels := {}
 
 static var Players = {}
 
+var players_username_display_name = {}
+
 var party
+
+var current_user : NakamaAPI.ApiUser = null
 
 signal OnStartGame()
 
@@ -29,9 +33,9 @@ signal OnStartGame()
 @onready var group_name : LineEdit = %GroupName
 @onready var group_name2 : LineEdit = %GroupName2
 @onready var group_desc : LineEdit = %GroupDesc
-@onready var groupvbox : VBoxContainer = %GroupVBox
+@onready var group_members_list : VBoxContainer = %GroupMembersList
 @onready var group_query : LineEdit = %GroupQuery
-@onready var panel6vbox : VBoxContainer = %Panel6Vbox
+@onready var groups_vbox : VBoxContainer = %GroupsVBox
 @onready var user_to_manager : LineEdit = %UserToManage
 @onready var chat_name : LineEdit = %ChatName
 @onready var username_container : TabContainer = %UsernameContainer
@@ -40,12 +44,29 @@ signal OnStartGame()
 @onready var chat_text_line_edit : LineEdit = %ChatTextLineEdit
 @onready var trade_vbox1 : VBoxContainer = %TradeVbox1
 @onready var trade_vbox2 : VBoxContainer = %TradeVBox2
+@onready var popup : Window = $Popup
+@onready var selected_group: PanelContainer = %SelectedGroup
 
 @onready var notificatin_container : NotificationContainer = $NotificationContainer 
 @onready var user_information_display : PanelContainer = %UserInformationDisplay
+@onready var selected_group_name: Label = %SelectedGroupName
+@onready var selected_group_description: Label = %SelectedGroupDescription
+@onready var selected_group_id: Label = %SelectedGroupID
+@onready var selected_group_is_open: Label = %SelectedGroupIsOpen
+
+@onready var group_listing_slider: HSlider = %GroupListingSlider
+@onready var group_listing_selected_label: Label = %GroupListingSelectedLabel
+@onready var groups_available_to_user: OptionButton = %GroupsAvailableToUser
+@onready var group_users_option_button: OptionButton = %GroupUsers
+
+var available_groups_to_current_user : Array
+var available_users_in_current_group : Array
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
+
+	selected_group.visible = false
+	popup.visible = false
 
 	client = Nakama.create_client("defaultkey", 
 								 "127.0.0.1", 
@@ -55,7 +76,15 @@ func _ready():
 	lobby_container.visible = false
 	authentication.visible = true
 	user_information_display.visible = false
+	
+	var args = OS.get_cmdline_args()
+	
+	if args.size() <= 1:
+		return
 
+	_on_login_pressed(args[1].strip_edges(), args[2].strip_edges())
+
+#region Login/Register
 func updateUserInfo(username: String, 
 					displayname : String, 
 					avaterurl : String = "", 
@@ -70,20 +99,6 @@ func updateUserInfo(username: String,
 									  location, 
 									  timezone)
 
-func onMatchPresence(presence : NakamaRTAPI.MatchPresenceEvent):
-	print(presence)
-
-func onMatchState(state : NakamaRTAPI.MatchData):
-	print("data is : " + str(state.data))
-
-func onSocketConnected():
-	print("Socket Connected")
-
-func onSocketClosed():
-	print("Socket Closed")
-
-func onSocketReceivedError(err):
-	print("Socket Error:" + str(err))
 
 func _on_register_account_pressed(username: String, 
 								  email: String, 
@@ -113,7 +128,7 @@ func _on_register_account_pressed(username: String,
 	if users.users and users.users.size() > 0:
 		u = users.users[0] as NakamaAPI.ApiUser
 	
-	connect_user_to_lobby(u)
+	connect_user_to_lobby(u, email)
 
 func _on_login_pressed(email: String, password: String) -> void:
 
@@ -139,15 +154,20 @@ func _on_login_pressed(email: String, password: String) -> void:
 	if users.users and users.users.size() > 0:
 		u = users.users[0] as NakamaAPI.ApiUser
 		
-	print("\n\nmy_user: ", u, "\n\n")
+	#print("\n\nmy_user: ", u, "\n\n")
 		
-	connect_user_to_lobby(u)
+	connect_user_to_lobby(u, email)
 	
-func connect_user_to_lobby(user: NakamaAPI.ApiUser) -> void:
+func connect_user_to_lobby(user: NakamaAPI.ApiUser, email: String = "") -> void:
+	
+	current_user = user
+	
 	lobby_container.visible = true
 	authentication.visible = false
-	user_information_display.update_user_info(user)
+	
+	user_information_display.update_user_info(user, email)
 	user_information_display.visible = true
+	
 	print("\n\nSession is valid: = %s\n\n" % str(session.is_valid()))
 	
 	#var deviceid = OS.get_unique_id()
@@ -177,6 +197,30 @@ func connect_user_to_lobby(user: NakamaAPI.ApiUser) -> void:
 	setupMultiplayerBridge()
 	subToFriendChannels()
 	update_friends_list()
+#endregion
+
+#region Connect/Disconnect 
+
+func _on_ping_button_down():
+	#sendData.rpc("hello world")
+	var data = {"hello" : "world"}
+	socket.send_match_state_async(createdMatch.match_id, 1, JSON.stringify(data))
+	pass # Replace with function body.
+
+func onMatchPresence(presence : NakamaRTAPI.MatchPresenceEvent):
+	print(presence)
+
+func onMatchState(state : NakamaRTAPI.MatchData):
+	print("data is : " + str(state.data))
+
+func onSocketConnected():
+	print("Socket Connected")
+
+func onSocketClosed():
+	print("Socket Closed")
+
+func onSocketReceivedError(err):
+	print("Socket Error:" + str(err))
 
 func setupMultiplayerBridge():
 	multiplayerBridge = NakamaMultiplayerBridge.new(socket)
@@ -199,7 +243,7 @@ func onPeerConnected(id):
 			"name" : multiplayer.get_unique_id(),
 			"ready" : 0
 		}
-	print(Players)
+	#print(Players)
 	
 func onPeerDisconnected(id):
 	print("Peer disconnected id is : " + str(id))
@@ -209,6 +253,15 @@ func onMatchJoinError(error):
 
 func onMatchJoin():
 	print("joined Match with id: " + multiplayerBridge.match_id)
+	
+#endregion
+
+#region NakamaStorage
+
+@rpc("any_peer")
+func sendData(message):
+	print(message)
+
 func _on_store_data_button_down():
 	var saveGame = {
 		"name" : "username",
@@ -254,6 +307,9 @@ func _on_list_data_button_down():
 	for i in dataList.objects:
 		print(i)
 
+#endregion
+
+#region Matchmaking System
 
 func _on_join_create_match_button_down():
 	multiplayerBridge.join_named_match(match_name.text)
@@ -265,18 +321,6 @@ func _on_join_create_match_button_down():
 	#
 	#print("Created match :" + str(createdMatch.match_id))
 	pass # Replace with function body.
-
-
-func _on_ping_button_down():
-	#sendData.rpc("hello world")
-	var data = {"hello" : "world"}
-	socket.send_match_state_async(createdMatch.match_id, 1, JSON.stringify(data))
-	pass # Replace with function body.
-
-@rpc("any_peer")
-func sendData(message):
-	print(message)
-
 
 func _on_matchmaking_button_down():
 	var query = "+properties.region:US +properties.rank:>=4 +properties.rank:<=10"
@@ -297,18 +341,41 @@ func _on_matchmaking_button_down():
 func onMatchMakerMatched(matched : NakamaRTAPI.MatchmakerMatched):
 	var joinedMatch = await socket.join_matched_async(matched)
 	createdMatch = joinedMatch
+	
+#endregion
+	
+#region Friends 
 
-######### Friends 
 func _on_add_friend_button_down():
 
-	var id = [add_friend_text.text]
+	var id = [add_friend_text.text.strip_edges()]
 	
 	var result = await client.add_friends_async(session, null, id)
-	update_friends_list()
+	
+	if result.is_exception():
+		notificatin_container.create_notification(
+			"Error! Não foi possível adicionar esse usuário", 
+			NotificationContainer.NotificationType.ERROR
+		)
+	else:
+		notificatin_container.create_notification(
+			"Usuário %s adicionado com sucesso!" % id, 
+		)
+		update_friends_list()
 
 
 func _on_get_friends_button_down():
+	
+	var curr_friends_size : int = friends_container.get_child_count()
+	
 	update_friends_list()
+	
+	var new_friends_size : int = friends_container.get_child_count()
+	
+	if curr_friends_size != new_friends_size:
+		notificatin_container.create_notification(
+			"Lista de usuários atualizados!", 
+		)
 	
 func update_friends_list() -> void:
 	var result = await client.list_friends_async(session)
@@ -322,6 +389,7 @@ func update_friends_list() -> void:
 		friends_container.add_child(friends_hbox)
 		friends_hbox.set_friend.call_deferred(i.user.display_name, 
 								onTrade.bind(i), 
+								create_chat_with_other_player.bind(i.user.display_name),
 								remove_friend_from_username.bind(i.user.username),
 								block_friend_by_username.bind(i.user.username))
 		"""
@@ -336,7 +404,7 @@ func update_friends_list() -> void:
 		currentButton.button_down.connect(onTrade.bind(i))
 		#currentButton.button_down.connect(onInviteToParty.bind(i))
 		"""
-
+	
 func clear_box(box: BoxContainer) -> void:
 	
 	for child in box.get_children():
@@ -344,39 +412,85 @@ func clear_box(box: BoxContainer) -> void:
 		child = null
 
 func _on_remove_friend_button_down():
-	remove_friend_from_username(add_friend_text.text)
+	remove_friend_from_username(add_friend_text.text.strip_edges())
 
 func remove_friend_from_username(username: String) -> void:
+	
 	var result = await client.delete_friends_async(session,[], [username])
-	update_friends_list()
+	
+	if result.is_exception():
+		notificatin_container.create_notification(
+			"Error! Não foi possível remover esse usuario", 
+			NotificationContainer.NotificationType.ERROR
+		)
+	else:
+		notificatin_container.create_notification(
+			"Usuário deletado com sucesso!", 
+		)
+		update_friends_list()
 
 func _on_block_friends_button_down():
-	var result = await client.block_friends_async(session,[], [add_friend_text.text])
-	block_friend_by_username(add_friend_text.text)
+	block_friend_by_username(add_friend_text.text.strip_edges())
 	
 func block_friend_by_username(username: String) -> void:
 	var result = await client.block_friends_async(session,[], [username])
 
+	if result.is_exception():
+		notificatin_container.create_notification(
+			"Error! Não foi possível bloquear esse usuario", 
+			NotificationContainer.NotificationType.ERROR
+		)
+	else:
+		notificatin_container.create_notification(
+			"Usuário bloqueado com sucesso!" % username, 
+		)
+		update_friends_list()
+
 func _on_create_group_button_down():
 	var group = await client.create_group_async(session, group_name.text, group_desc.text, "" , "en", true, 32)
 	print(group)
-	pass # Replace with function body.
-
-
-func _on_get_group_memebers_button_down():
-	var result = await client.list_group_users_async(session, group_name2.text)
 	
-	for i in result.group_users:
-		var currentlabel = Label.new()
-		currentlabel.text = i.user.display_name
-		groupvbox.add_child(i.user.username)
-		print("users in group " + group_name2.text  + i.user.username)
-	pass # Replace with function body.
 
+func _on_get_group_information_button_down():
+	var result_group_information = await client.list_groups_async(session, group_name2.text, 1)
+	
+	if result_group_information.groups.size() == 0:
+		selected_group.visible = false
+		notificatin_container.create_notification("O grupo \"%s\" não existe!" % group_name2.text, NotificationContainer.NotificationType.ERROR )
+		group_name2.text = ""
+		removeMyChildren(group_members_list)
+		return
+		
+	group_name2.text = ""
+		
+	var group = result_group_information.groups[0]
+	
+	var result_users_information = await client.list_group_users_async(session, group.id)
+	
+	selected_group.visible = true
+	#print("TA AQUI AS INFORMACOES DO GRUPO!!!\n\n")
+	#print("result: ", result_group_information)
+	#print("ACABOU AQUI AS INFORMACOES DO GRUPO!!!\n\n")
+	
+	selected_group_name.text = "Group name: %s" % group.name
+	selected_group_description.text = "Group description: %s" % group.description
+	selected_group_id.text = "Group ID: %s" % group.id
+	selected_group_is_open.text = "Is open: %s" %  str(group.open)
+	
+	for i in result_users_information.group_users:
+		
+		var currentlabel = Label.new()
+		currentlabel.name = i.user.username
+		currentlabel.text = i.user.display_name
+		
+		group_members_list.add_child(currentlabel)
+		
+		#print("users in group " + group_name2.text  + i.user.username)
+		
+	selectedGroup = group
 
 func _on_button_button_down():
 	Ready.rpc(multiplayer.get_unique_id())
-	pass # Replace with function body.
 	
 @rpc("any_peer", "call_local")
 func Ready(id):
@@ -393,10 +507,18 @@ func Ready(id):
 func StartGame():
 	OnStartGame.emit()
 	hide()
+#endregion
 
-####### Group 
-func _on_add_user_to_group_button_down():
-	await  client.join_group_async(session, selectedGroup.id)
+#region Group 
+func _on_add_user_to_group_button_down(group):
+	var result = await client.join_group_async(session, group.id)
+	print("_on_add_user_to_group_button_down: ", result)
+
+func _on_close_group_pressed() -> void:
+	await client.close_group_async(session, selectedGroup.id)
+
+func _on_delete_group_pressed() -> void:
+	pass # Replace with function body.
 
 func _on_add_user_to_group_2_button_down():
 	var users = await client.list_group_users_async(session,selectedGroup.id, 3)
@@ -405,55 +527,83 @@ func _on_add_user_to_group_2_button_down():
 		var u = user.user as NakamaAPI.ApiUser
 		await client.add_group_users_async(session, selectedGroup.id, [u.id])
 
-
-func _on_check_button_toggled(toggled_on):
-	await client.update_group_async(session, selectedGroup.id, "Strong Gamers", "we are the strong gamers!", null, "en", toggled_on)
-	pass # Replace with function body.
-
+#func _on_check_button_toggled(toggled_on):
+#	await client.update_group_async(session, selectedGroup.id, "Strong Gamers", "we are the strong gamers!", null, "en", toggled_on)
+#	pass # Replace with function body.
 
 func _on_list_groups_button_down():
-	var limit = 10
-	var result = await client.list_groups_async(session, group_query.text, limit, null, null, null)
+	var limit = group_listing_slider.value
+	var result = await client.list_groups_async(session, group_query.text.strip_edges(), limit, null, null, null)
+	
+	print("\ngroups: ", result.groups,"\n")
+	
+	if result.groups.size() == 0:
+		notificatin_container.create_notification("O grupo \"%s\" não existe!" % group_query.text.strip_edges(), NotificationContainer.NotificationType.ERROR )
+		return
 	
 	for group in result.groups:
+		
 		var vbox = VBoxContainer.new()
 		var hbox = HBoxContainer.new()
 		
 		var namelabel = Label.new()
+		
 		namelabel.text = group.name
 		hbox.add_child(namelabel)
+		
 		var button = Button.new()
-		button.button_down.connect(onGroupSelectButton.bind(group))
-		button.text = "Select Group"
+		button.button_down.connect(_on_add_user_to_group_button_down.bind(group))
+		button.text = tr("Join group")
+		
 		hbox.add_child(button)
 		vbox.add_child(hbox)
-		panel6vbox.add_child(vbox)
-	pass # Replace with function body.
+		
+		groups_vbox.add_child(vbox)
 
-func onGroupSelectButton(group):
-	selectedGroup = group
+func get_selected_user():
+	var selected_user_idx = group_users_option_button.selected
+	var selected_user_id = available_users_in_current_group[selected_user_idx].user.id
+	
+	var result : NakamaAPI.ApiUsers = await  client.get_users_async(session, [selected_user_id],[], null)
+
+	return result
 
 func _on_promote_user_button_down():
-	var result : NakamaAPI.ApiUsers = await  client.get_users_async(session, [],[user_to_manager.text], null)
+	
+	var result = await get_selected_user()
+
 	for u in result.users:
-		await client.promote_group_users_async(session, selectedGroup.id, [u.id])
+		var promote_result = await client.promote_group_users_async(session, selectedGroup.id, [u.id])
+		
+		if promote_result.is_exception():
+			notificatin_container.create_notification(promote_result.exception.message,
+										  NotificationContainer.NotificationType.ERROR)
 	pass # Replace with function body.
 
 
 func _on_demote_user_button_down():
-	var result : NakamaAPI.ApiUsers = await  client.get_users_async(session, [],[user_to_manager.text], null)
-	for u in result.users:
-		await client.demote_group_users_async(session, selectedGroup.id, [u.id])
-	pass # Replace with function body.
+	var result = await get_selected_user()
 
+	for u in result.users:
+		var demote_result = await client.demote_group_users_async(session, selectedGroup.id, [u.id])
+		
+		if demote_result.is_exception():
+			notificatin_container.create_notification(demote_result.exception.message,
+										  NotificationContainer.NotificationType.ERROR)
+	pass # Replace with function body.
 
 func _on_kick_user_button_down():
-	var result : NakamaAPI.ApiUsers = await  client.get_users_async(session, [],[user_to_manager.text], null)
+
+	var result = await get_selected_user()
+
 	for u in result.users:
-		await client.kick_group_users_async(session, selectedGroup.id, [u.id])
+		var kick_result = await client.kick_group_users_async(session, selectedGroup.id, [u.id])
+		
+		if kick_result.is_exception():
+			notificatin_container.create_notification(kick_result.exception.message,
+										  NotificationContainer.NotificationType.ERROR)
+		
 	pass # Replace with function body.
-
-
 
 func _on_leave_group_button_down():
 	await client.leave_group_async(session, selectedGroup.id)
@@ -463,32 +613,77 @@ func _on_leave_group_button_down():
 func _on_delete_group_button_down():
 	await  client.delete_group_async(session, selectedGroup.id)
 	pass # Replace with function body.
+#endregion
 
-########## Chat Room Code
+#region Chat Room Code
 func _on_join_chat_room_button_down():
-	var type = NakamaSocket.ChannelType.Room
-	currentChannel = await socket.join_chat_async(chat_name.text, type, false, false)
-	
-	print("channel id: " + currentChannel.id)
+	create_chat_channel(chat_name.text.strip_edges())
 
+func create_chat_with_other_player(other_player: String) -> void:
+	print("criar chat")
+
+func create_chat_channel(chat_name: String) -> void:
+	var type = NakamaSocket.ChannelType.Room
+	currentChannel = await socket.join_chat_async(chat_name, 
+												  type, 
+												  false, 
+												  false)
+	
+	print("canal criado! ", currentChannel)
+	print("channel id: " + currentChannel.id)	
+
+## Toda vez que uma nova mensagem for mandada para o servidor
+## essa função será invocada
 func onChannelMessage(message : NakamaAPI.ApiChannelMessage):
 	var content = JSON.parse_string(message.content)
 	if content.type == 0:
-		username_container.get_node(content.id).text += message.username + ": " + str(content.message) + "\n"
+		
+		var username = content.id
+		
+		if not players_username_display_name.has(username):
+			return
+			
+		var display_name = players_username_display_name[username]
+		var current_conversation : TextEdit = username_container.get_node(display_name)
+		
+		current_conversation.text += display_name + ": " + str(content.message) + "\n"
+		current_conversation.scroll_vertical = current_conversation.text.count("\n")
+		
 	elif content.type == 1 && party == null:
+		
 		channel_message_panel.show()
 		party = {"id" : content.partyID}
 		channel_message_label.text = str(content.message)
+		
+	
 
 func _on_submit_chat_button_down():
+	
+	if chat_text_line_edit.text.is_empty():
+		notificatin_container.create_notification("Erro! Mensagem vazia!",
+												  NotificationContainer.NotificationType.ERROR)
+		return
+	
+	#var current_username: String = chatChannels[currentChannel.id].channel.self_presence.username
+	#var current_tab : int = username_container.current_tab
+	var new_message : String = chat_text_line_edit.text.strip_edges()
+	
+	chat_text_line_edit.text = ""
+	
+	#print("\n\nchatChannels: ", chatChannels)
+	
 	await socket.write_chat_message_async(currentChannel.id, {
-		 "message" : chat_text_line_edit.text,
+		 "message" : new_message,
 		"id" : chatChannels[currentChannel.id].label,
 		"type" : 0
 		})
-
-
+	
 func _on_join_group_chat_room_button_down():
+	
+	if not selectedGroup:
+		invoke_popup("Erro!", "Nenhum grupo selecionado")
+		return
+	
 	var type = NakamaSocket.ChannelType.Group
 	currentChannel = await socket.join_chat_async(selectedGroup.id, type, true, false)
 	
@@ -502,8 +697,6 @@ func _on_join_group_chat_room_button_down():
 	username_container.add_child(currentEdit)
 	currentEdit.text = await listMessages(currentChannel)
 	username_container.tab_changed.connect(onChatTabChanged.bind(selectedGroup.id))
-	
-	pass # Replace with function body.
 
 func onChatTabChanged(index, channelID):
 	currentChannel = chatChannels[channelID].channel
@@ -514,10 +707,15 @@ func listMessages(currentChannel):
 	var result = await  client.list_channel_messages_async(session, currentChannel.id, 100, true)
 	var text = ""
 	for message in result.messages:
+		
+		var sender_info_json : NakamaAPI.ApiUsers = await client.get_users_async(session, [message.sender_id])
+		var all_user_info = sender_info_json.serialize()
+		#print("user_info: ", user_info.users[0])
+		
 		if(message.content != "{}"):
 			var content = JSON.parse_string(message.content)
-		
-			text += message.username + ": " + str(content.message) + "\n"
+			var curr_user = all_user_info.users[0]
+			text += curr_user.display_name + ": " + str(content.message) + "\n"
 	return text
 	
 func subToFriendChannels():
@@ -529,9 +727,12 @@ func subToFriendChannels():
 		"channel" : channel,
 		"label" : i.user.username
 		} 
+		
+		# Adicionando uma nova tab de conversa entre jogadores
 		var currentEdit = TextEdit.new()
-		currentEdit.name = i.user.username
+		currentEdit.name = i.user.display_name
 		username_container.add_child(currentEdit)
+		players_username_display_name[i.user.username] = i.user.display_name
 		currentEdit.text = await listMessages(channel)
 		username_container.tab_changed.connect(onChatTabChanged.bind(channel.id))
 
@@ -551,7 +752,9 @@ func _on_join_direct_chat_button_down():
 			
 				chat_text_line_edit.text += message.username + ": " + str(content.message) + "\n"
 
-###### Party System
+#endregion
+
+#region Party System
 
 func _on_create_party_button_down():
 	party = await  socket.create_party_async(false, 2)
@@ -582,7 +785,9 @@ func _on_join_party_no_button_down():
 func onPartyPresence(presence : NakamaRTAPI.PartyPresenceEvent):
 	print("JOINED PARTY " + presence.party_id)
 
-############### RPC TRADE SYSTEM
+#endregion
+
+#region RPC TRADE SYSTEM
 func _on_ping_rpc_button_down():
 	var item = {
 		"name" = "sword",
@@ -738,3 +943,43 @@ func _on_cancel_trade_offer_button_down():
 	var response = JSON.parse_string(result.payload)
 	print("Canceled trade offer " + response.result)
 	pass # Replace with function body.
+	
+#endregion
+
+#region Popup
+
+func invoke_popup(title: String, message: String) -> void:
+	popup.configure_text(title, message)
+	popup.popup_centered()
+
+#endregion
+
+func _on_group_listing_slider_value_changed(value: int) -> void:
+	group_listing_selected_label.text = "%d" % value
+
+func _on_update_available_groups_pressed() -> void:
+	
+	var result = await client.list_user_groups_async(session, current_user.id)
+
+	print("sou membro de: ", result.user_groups)
+	
+	groups_available_to_user.clear()
+	
+	available_groups_to_current_user = result.user_groups
+	
+	for group in result.user_groups:
+		groups_available_to_user.add_item(group.group.name)
+
+func _on_groups_available_to_user_item_selected(index: int) -> void:
+	var selected_id = available_groups_to_current_user[index].group.id
+	
+	selectedGroup = available_groups_to_current_user[index].group
+	
+	var result = await client.list_group_users_async(session, selected_id)
+	
+	group_users_option_button.clear()
+	
+	available_users_in_current_group = result.group_users
+	
+	for user in result.group_users:
+		group_users_option_button.add_item(user.user.display_name)

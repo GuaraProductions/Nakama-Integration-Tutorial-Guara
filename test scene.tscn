@@ -1,11 +1,12 @@
-[gd_scene load_steps=11 format=3 uid="uid://p2ptqa1u1n1k"]
+[gd_scene load_steps=13 format=3 uid="uid://p2ptqa1u1n1k"]
 
-[ext_resource type="Script" path="res://Client.gd" id="1_mtcsr"]
+[ext_resource type="Script" uid="uid://bkso6trqnr35v" path="res://Client.gd" id="1_mtcsr"]
 [ext_resource type="PackedScene" uid="uid://c25altqf87k2j" path="res://Lobby/FriendHBoxContainer/FriendHBoxContainer.tscn" id="2_cekro"]
 [ext_resource type="PackedScene" uid="uid://bg6xgsfypi4gr" path="res://NotificationContainer/NotificationContainer.tscn" id="2_lanui"]
 [ext_resource type="PackedScene" uid="uid://cvedwg86rsyp2" path="res://Lobby/UserInformationDisplay/UserInformationDisplay.tscn" id="2_qmkq0"]
 [ext_resource type="PackedScene" uid="uid://dd2ekb3yor3hh" path="res://Authentication/LoginPanel/LoginPanel.tscn" id="4_4xlfs"]
 [ext_resource type="PackedScene" uid="uid://xq36w5vrpfwb" path="res://Authentication/RegisterPanel/RegisterPanel.tscn" id="5_wys0s"]
+[ext_resource type="PackedScene" uid="uid://32gcwea4fq4t" path="res://Popup/PopupBox.tscn" id="7_tv77q"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_6qptp"]
 content_margin_left = 15.0
@@ -39,6 +40,13 @@ corner_radius_top_right = 15
 corner_radius_bottom_right = 15
 corner_radius_bottom_left = 15
 
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_tv77q"]
+content_margin_left = 15.0
+content_margin_top = 15.0
+content_margin_right = 15.0
+content_margin_bottom = 5.0
+bg_color = Color(0.0728426, 0.0728427, 0.0728426, 1)
+
 [node name="Game" type="MarginContainer"]
 anchors_preset = 15
 anchor_right = 1.0
@@ -60,9 +68,10 @@ layout_mode = 2
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
-current_tab = 0
+current_tab = 7
 
 [node name="Friend List" type="PanelContainer" parent="HBox/LobbyContainer"]
+visible = false
 layout_mode = 2
 size_flags_vertical = 0
 metadata/_tab_index = 0
@@ -74,33 +83,37 @@ layout_mode = 2
 layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="BlockFriends" type="Button" parent="HBox/LobbyContainer/Friend List/HBoxContainer/VBox"]
-layout_mode = 2
-size_flags_vertical = 0
-text = "Block Friend"
-
-[node name="GridContainer" type="HBoxContainer" parent="HBox/LobbyContainer/Friend List/HBoxContainer/VBox"]
-layout_mode = 2
-size_flags_vertical = 0
-
-[node name="AddFriendText" type="LineEdit" parent="HBox/LobbyContainer/Friend List/HBoxContainer/VBox/GridContainer"]
+[node name="AddFriendText" type="LineEdit" parent="HBox/LobbyContainer/Friend List/HBoxContainer/VBox"]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
-placeholder_text = "Name of friend"
+placeholder_text = "Name of username"
+alignment = 1
+
+[node name="GridContainer" type="GridContainer" parent="HBox/LobbyContainer/Friend List/HBoxContainer/VBox"]
+layout_mode = 2
+size_flags_vertical = 0
+columns = 2
 
 [node name="AddFriend" type="Button" parent="HBox/LobbyContainer/Friend List/HBoxContainer/VBox/GridContainer"]
 unique_name_in_owner = true
 layout_mode = 2
+size_flags_horizontal = 3
 text = "Add friend"
 
-[node name="RemoveFriend" type="Button" parent="HBox/LobbyContainer/Friend List/HBoxContainer/VBox"]
+[node name="BlockFriends" type="Button" parent="HBox/LobbyContainer/Friend List/HBoxContainer/VBox/GridContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 0
+text = "Block Friend"
+
+[node name="RemoveFriend" type="Button" parent="HBox/LobbyContainer/Friend List/HBoxContainer/VBox/GridContainer"]
 layout_mode = 2
 text = "Delete friend"
 
-[node name="GetFriends" type="Button" parent="HBox/LobbyContainer/Friend List/HBoxContainer/VBox"]
+[node name="GetFriends" type="Button" parent="HBox/LobbyContainer/Friend List/HBoxContainer/VBox/GridContainer"]
 layout_mode = 2
-text = "Get Friends"
+text = "Update Friends List"
 
 [node name="FriendsBox" type="PanelContainer" parent="HBox/LobbyContainer/Friend List/HBoxContainer"]
 custom_minimum_size = Vector2(250, 0)
@@ -201,134 +214,288 @@ unique_name_in_owner = true
 layout_mode = 2
 placeholder_text = "Name of group"
 
-[node name="CloseGroup" type="Button" parent="HBox/LobbyContainer/Group Admin Panel/VBoxContainer"]
+[node name="GetGroupInformation" type="Button" parent="HBox/LobbyContainer/Group Admin Panel/VBoxContainer"]
+layout_mode = 2
+text = "Select Group"
+
+[node name="CloseSelectedGroup" type="Button" parent="HBox/LobbyContainer/Group Admin Panel/VBoxContainer"]
 layout_mode = 2
 text = "Close Group"
 
-[node name="GetGroupMemebers" type="Button" parent="HBox/LobbyContainer/Group Admin Panel/VBoxContainer"]
+[node name="DeleteSelectedGroup" type="Button" parent="HBox/LobbyContainer/Group Admin Panel/VBoxContainer"]
 layout_mode = 2
-text = "Get Group"
-
-[node name="CreateGroup" type="Button" parent="HBox/LobbyContainer/Group Admin Panel/VBoxContainer"]
-layout_mode = 2
-text = "Create Group"
-
-[node name="DeleteGroup" type="Button" parent="HBox/LobbyContainer/Group Admin Panel/VBoxContainer/CreateGroup"]
-layout_mode = 0
-offset_left = -4.0
-offset_top = 41.0
-offset_right = 105.0
-offset_bottom = 72.0
 text = "Delete Group"
 
-[node name="Panel4" type="PanelContainer" parent="HBox/LobbyContainer/Group Admin Panel/VBoxContainer"]
-layout_mode = 2
-
-[node name="VBoxContainer" type="VBoxContainer" parent="HBox/LobbyContainer/Group Admin Panel/VBoxContainer/Panel4"]
-layout_mode = 2
-
-[node name="GroupVBox" type="VBoxContainer" parent="HBox/LobbyContainer/Group Admin Panel/VBoxContainer/Panel4/VBoxContainer"]
+[node name="SelectedGroup" type="PanelContainer" parent="HBox/LobbyContainer/Group Admin Panel/VBoxContainer"]
 unique_name_in_owner = true
 layout_mode = 2
+size_flags_vertical = 3
 
-[node name="RichTextLabel" type="RichTextLabel" parent="HBox/LobbyContainer/Group Admin Panel/VBoxContainer/Panel4/VBoxContainer"]
+[node name="ScrollContainer" type="ScrollContainer" parent="HBox/LobbyContainer/Group Admin Panel/VBoxContainer/SelectedGroup"]
 layout_mode = 2
-bbcode_enabled = true
-text = "[center][b]Group Memebers"
+
+[node name="_" type="VBoxContainer" parent="HBox/LobbyContainer/Group Admin Panel/VBoxContainer/SelectedGroup/ScrollContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="SelectedGroupName" type="Label" parent="HBox/LobbyContainer/Group Admin Panel/VBoxContainer/SelectedGroup/ScrollContainer/_"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Group name:"
+
+[node name="SelectedGroupDescription" type="Label" parent="HBox/LobbyContainer/Group Admin Panel/VBoxContainer/SelectedGroup/ScrollContainer/_"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Group description:"
+
+[node name="SelectedGroupID" type="Label" parent="HBox/LobbyContainer/Group Admin Panel/VBoxContainer/SelectedGroup/ScrollContainer/_"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Group ID:"
+
+[node name="SelectedGroupIsOpen" type="Label" parent="HBox/LobbyContainer/Group Admin Panel/VBoxContainer/SelectedGroup/ScrollContainer/_"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Is open:"
+
+[node name="GroupMembers" type="Label" parent="HBox/LobbyContainer/Group Admin Panel/VBoxContainer/SelectedGroup/ScrollContainer/_"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 32
+text = "Group Members:"
+
+[node name="PanelContainer" type="PanelContainer" parent="HBox/LobbyContainer/Group Admin Panel/VBoxContainer/SelectedGroup/ScrollContainer/_"]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_styles/panel = SubResource("StyleBoxFlat_tv77q")
+
+[node name="GroupMembersList" type="VBoxContainer" parent="HBox/LobbyContainer/Group Admin Panel/VBoxContainer/SelectedGroup/ScrollContainer/_/PanelContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_vertical = 3
 
 [node name="Group Manager" type="PanelContainer" parent="HBox/LobbyContainer"]
 visible = false
 layout_mode = 2
 metadata/_tab_index = 4
 
-[node name="VBoxContainer" type="GridContainer" parent="HBox/LobbyContainer/Group Manager"]
+[node name="TabContainer" type="TabContainer" parent="HBox/LobbyContainer/Group Manager"]
 layout_mode = 2
+current_tab = 2
+
+[node name="Create Group" type="MarginContainer" parent="HBox/LobbyContainer/Group Manager/TabContainer"]
+visible = false
+layout_mode = 2
+theme_override_constants/margin_left = 15
+theme_override_constants/margin_top = 15
+theme_override_constants/margin_right = 15
+theme_override_constants/margin_bottom = 15
+metadata/_tab_index = 0
+
+[node name="VBoxContainer" type="VBoxContainer" parent="HBox/LobbyContainer/Group Manager/TabContainer/Create Group"]
+layout_mode = 2
+theme_override_constants/separation = 25
+
+[node name="CreateGroupGrid" type="GridContainer" parent="HBox/LobbyContainer/Group Manager/TabContainer/Create Group/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 0
+theme_override_constants/h_separation = 15
+theme_override_constants/v_separation = 15
 columns = 2
 
-[node name="Label" type="Label" parent="HBox/LobbyContainer/Group Manager/VBoxContainer"]
+[node name="GroupNameLabel" type="Label" parent="HBox/LobbyContainer/Group Manager/TabContainer/Create Group/VBoxContainer/CreateGroupGrid"]
 layout_mode = 2
 size_flags_horizontal = 3
 text = "Name"
 
-[node name="GroupName" type="LineEdit" parent="HBox/LobbyContainer/Group Manager/VBoxContainer"]
+[node name="GroupName" type="LineEdit" parent="HBox/LobbyContainer/Group Manager/TabContainer/Create Group/VBoxContainer/CreateGroupGrid"]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="Label2" type="Label" parent="HBox/LobbyContainer/Group Manager/VBoxContainer"]
+[node name="GroupDescLabel" type="Label" parent="HBox/LobbyContainer/Group Manager/TabContainer/Create Group/VBoxContainer/CreateGroupGrid"]
 layout_mode = 2
 text = "Description"
 
-[node name="GroupDesc" type="LineEdit" parent="HBox/LobbyContainer/Group Manager/VBoxContainer"]
+[node name="GroupDesc" type="LineEdit" parent="HBox/LobbyContainer/Group Manager/TabContainer/Create Group/VBoxContainer/CreateGroupGrid"]
 unique_name_in_owner = true
 layout_mode = 2
 
-[node name="GroupQuery" type="LineEdit" parent="HBox/LobbyContainer/Group Manager/VBoxContainer"]
-unique_name_in_owner = true
+[node name="CreateGroup2" type="Button" parent="HBox/LobbyContainer/Group Manager/TabContainer/Create Group/VBoxContainer"]
 layout_mode = 2
-placeholder_text = "Group Query"
-
-[node name="CreateGroup" type="Button" parent="HBox/LobbyContainer/Group Manager/VBoxContainer"]
-layout_mode = 2
+size_flags_vertical = 0
 text = "Create Group"
 
-[node name="AddUserToGroup" type="Button" parent="HBox/LobbyContainer/Group Manager/VBoxContainer"]
+[node name="Group Query" type="MarginContainer" parent="HBox/LobbyContainer/Group Manager/TabContainer"]
+visible = false
 layout_mode = 2
-text = "Join Group"
+theme_override_constants/margin_left = 15
+theme_override_constants/margin_top = 15
+theme_override_constants/margin_right = 15
+theme_override_constants/margin_bottom = 15
+metadata/_tab_index = 1
 
-[node name="AddUserToGroup2" type="Button" parent="HBox/LobbyContainer/Group Manager/VBoxContainer"]
+[node name="ScrollContainer" type="ScrollContainer" parent="HBox/LobbyContainer/Group Manager/TabContainer/Group Query"]
 layout_mode = 2
-text = "Add User 
-To Group"
 
-[node name="List Groups" type="Button" parent="HBox/LobbyContainer/Group Manager/VBoxContainer"]
+[node name="_" type="VBoxContainer" parent="HBox/LobbyContainer/Group Manager/TabContainer/Group Query/ScrollContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_constants/separation = 15
+
+[node name="HBoxContainer" type="HBoxContainer" parent="HBox/LobbyContainer/Group Manager/TabContainer/Group Query/ScrollContainer/_"]
+layout_mode = 2
+
+[node name="GroupNameLabel" type="Label" parent="HBox/LobbyContainer/Group Manager/TabContainer/Group Query/ScrollContainer/_/HBoxContainer"]
+layout_mode = 2
+text = "Group Name: "
+
+[node name="GroupQuery" type="LineEdit" parent="HBox/LobbyContainer/Group Manager/TabContainer/Group Query/ScrollContainer/_/HBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+placeholder_text = "Group Query"
+
+[node name="HBoxContainer2" type="HBoxContainer" parent="HBox/LobbyContainer/Group Manager/TabContainer/Group Query/ScrollContainer/_"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="VBoxContainer" type="VBoxContainer" parent="HBox/LobbyContainer/Group Manager/TabContainer/Group Query/ScrollContainer/_/HBoxContainer2"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 15
+
+[node name="List Groups" type="Button" parent="HBox/LobbyContainer/Group Manager/TabContainer/Group Query/ScrollContainer/_/HBoxContainer2/VBoxContainer"]
 layout_mode = 2
 text = "List Groups"
 
-[node name="CheckButton" type="CheckButton" parent="HBox/LobbyContainer/Group Manager/VBoxContainer"]
+[node name="GroupListingLabel" type="Label" parent="HBox/LobbyContainer/Group Manager/TabContainer/Group Query/ScrollContainer/_/HBoxContainer2/VBoxContainer"]
 layout_mode = 2
-text = "Open"
+text = "Group listing limit:"
+horizontal_alignment = 1
 
-[node name="Panel" type="Panel" parent="HBox/LobbyContainer/Group Manager/VBoxContainer"]
-layout_mode = 2
-
-[node name="Panel6Vbox" type="VBoxContainer" parent="HBox/LobbyContainer/Group Manager/VBoxContainer/Panel"]
-unique_name_in_owner = true
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-
-[node name="UserToManage" type="LineEdit" parent="HBox/LobbyContainer/Group Manager/VBoxContainer"]
+[node name="GroupListingSlider" type="HSlider" parent="HBox/LobbyContainer/Group Manager/TabContainer/Group Query/ScrollContainer/_/HBoxContainer2/VBoxContainer"]
 unique_name_in_owner = true
 layout_mode = 2
-placeholder_text = "User To Manage"
+size_flags_horizontal = 3
+min_value = 1.0
+max_value = 25.0
+value = 10.0
 
-[node name="PromoteUser" type="Button" parent="HBox/LobbyContainer/Group Manager/VBoxContainer"]
+[node name="GroupListingSelectedLabel" type="Label" parent="HBox/LobbyContainer/Group Manager/TabContainer/Group Query/ScrollContainer/_/HBoxContainer2/VBoxContainer"]
+unique_name_in_owner = true
 layout_mode = 2
+size_flags_horizontal = 4
+text = "10"
+
+[node name="Panel" type="PanelContainer" parent="HBox/LobbyContainer/Group Manager/TabContainer/Group Query/ScrollContainer/_/HBoxContainer2"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="ScrollContainer" type="ScrollContainer" parent="HBox/LobbyContainer/Group Manager/TabContainer/Group Query/ScrollContainer/_/HBoxContainer2/Panel"]
+custom_minimum_size = Vector2(0, 75)
+layout_mode = 2
+
+[node name="GroupsVBox" type="VBoxContainer" parent="HBox/LobbyContainer/Group Manager/TabContainer/Group Query/ScrollContainer/_/HBoxContainer2/Panel/ScrollContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="Manage Groups" type="MarginContainer" parent="HBox/LobbyContainer/Group Manager/TabContainer"]
+layout_mode = 2
+theme_override_constants/margin_left = 15
+theme_override_constants/margin_top = 15
+theme_override_constants/margin_right = 15
+theme_override_constants/margin_bottom = 5
+metadata/_tab_index = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="HBox/LobbyContainer/Group Manager/TabContainer/Manage Groups"]
+layout_mode = 2
+theme_override_constants/separation = 15
+
+[node name="UpdateAvailableGroups" type="Button" parent="HBox/LobbyContainer/Group Manager/TabContainer/Manage Groups/VBoxContainer"]
+layout_mode = 2
+text = "Update groups"
+
+[node name="SelectAGroup" type="HBoxContainer" parent="HBox/LobbyContainer/Group Manager/TabContainer/Manage Groups/VBoxContainer"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="HBox/LobbyContainer/Group Manager/TabContainer/Manage Groups/VBoxContainer/SelectAGroup"]
+layout_mode = 2
+text = "Selected Group: "
+
+[node name="GroupsAvailableToUser" type="OptionButton" parent="HBox/LobbyContainer/Group Manager/TabContainer/Manage Groups/VBoxContainer/SelectAGroup"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="SelectAMember" type="HBoxContainer" parent="HBox/LobbyContainer/Group Manager/TabContainer/Manage Groups/VBoxContainer"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="HBox/LobbyContainer/Group Manager/TabContainer/Manage Groups/VBoxContainer/SelectAMember"]
+layout_mode = 2
+text = "Manage Member:"
+
+[node name="GroupUsers" type="OptionButton" parent="HBox/LobbyContainer/Group Manager/TabContainer/Manage Groups/VBoxContainer/SelectAMember"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="GridContainer2" type="GridContainer" parent="HBox/LobbyContainer/Group Manager/TabContainer/Manage Groups/VBoxContainer"]
+layout_mode = 2
+columns = 2
+
+[node name="PromoteUser" type="Button" parent="HBox/LobbyContainer/Group Manager/TabContainer/Manage Groups/VBoxContainer/GridContainer2"]
+layout_mode = 2
+size_flags_horizontal = 3
 text = "Promote"
 
-[node name="KickUser" type="Button" parent="HBox/LobbyContainer/Group Manager/VBoxContainer"]
+[node name="KickUser" type="Button" parent="HBox/LobbyContainer/Group Manager/TabContainer/Manage Groups/VBoxContainer/GridContainer2"]
 layout_mode = 2
+size_flags_horizontal = 3
 text = "Kick"
 
-[node name="DemoteUser" type="Button" parent="HBox/LobbyContainer/Group Manager/VBoxContainer"]
+[node name="DemoteUser" type="Button" parent="HBox/LobbyContainer/Group Manager/TabContainer/Manage Groups/VBoxContainer/GridContainer2"]
 layout_mode = 2
+size_flags_horizontal = 3
 text = "Demote"
 
-[node name="BanUser" type="Button" parent="HBox/LobbyContainer/Group Manager/VBoxContainer"]
+[node name="SelectAMember2" type="HBoxContainer" parent="HBox/LobbyContainer/Group Manager/TabContainer/Manage Groups/VBoxContainer"]
 layout_mode = 2
-text = "Ban"
 
-[node name="LeaveGroup" type="Button" parent="HBox/LobbyContainer/Group Manager/VBoxContainer"]
+[node name="Label" type="Label" parent="HBox/LobbyContainer/Group Manager/TabContainer/Manage Groups/VBoxContainer/SelectAMember2"]
 layout_mode = 2
+text = "Selected User: "
+
+[node name="UserToManage" type="LineEdit" parent="HBox/LobbyContainer/Group Manager/TabContainer/Manage Groups/VBoxContainer/SelectAMember2"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+placeholder_text = "User To Add"
+
+[node name="AddUserToGroup2" type="Button" parent="HBox/LobbyContainer/Group Manager/TabContainer/Manage Groups/VBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Add User To Group"
+
+[node name="HSeparator" type="HSeparator" parent="HBox/LobbyContainer/Group Manager/TabContainer/Manage Groups/VBoxContainer"]
+layout_mode = 2
+
+[node name="HBoxContainer" type="HBoxContainer" parent="HBox/LobbyContainer/Group Manager/TabContainer/Manage Groups/VBoxContainer"]
+layout_mode = 2
+
+[node name="LeaveGroup" type="Button" parent="HBox/LobbyContainer/Group Manager/TabContainer/Manage Groups/VBoxContainer/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
 text = "Leave Group"
 
-[node name="DeleteGroup" type="Button" parent="HBox/LobbyContainer/Group Manager/VBoxContainer"]
+[node name="DeleteGroup" type="Button" parent="HBox/LobbyContainer/Group Manager/TabContainer/Manage Groups/VBoxContainer/HBoxContainer"]
 layout_mode = 2
-text = "Leave Group"
+size_flags_horizontal = 3
+text = "Delete Group"
 
 [node name="Chat" type="PanelContainer" parent="HBox/LobbyContainer"]
 visible = false
@@ -346,21 +513,34 @@ placeholder_text = "Chat Name"
 [node name="HBoxContainer" type="HBoxContainer" parent="HBox/LobbyContainer/Chat/VBoxContainer"]
 layout_mode = 2
 
+[node name="CreateChatRoom" type="Button" parent="HBox/LobbyContainer/Chat/VBoxContainer/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Create Chat room"
+
 [node name="JoinGroupChatRoom" type="Button" parent="HBox/LobbyContainer/Chat/VBoxContainer/HBoxContainer"]
 layout_mode = 2
 size_flags_horizontal = 3
 text = "Join Group Chat"
 
-[node name="JoinChatRoom" type="Button" parent="HBox/LobbyContainer/Chat/VBoxContainer/HBoxContainer"]
-layout_mode = 2
-size_flags_horizontal = 3
-text = "Join Chat"
-
 [node name="Chat" type="PanelContainer" parent="HBox/LobbyContainer/Chat/VBoxContainer"]
 layout_mode = 2
+size_flags_vertical = 3
 
 [node name="VBoxContainer" type="VBoxContainer" parent="HBox/LobbyContainer/Chat/VBoxContainer/Chat"]
 layout_mode = 2
+
+[node name="UsernameContainer" type="TabContainer" parent="HBox/LobbyContainer/Chat/VBoxContainer/Chat/VBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_vertical = 3
+current_tab = 0
+
+[node name="username" type="TextEdit" parent="HBox/LobbyContainer/Chat/VBoxContainer/Chat/VBoxContainer/UsernameContainer"]
+layout_mode = 2
+editable = false
+wrap_mode = 1
+metadata/_tab_index = 0
 
 [node name="ChatTextLineEdit" type="LineEdit" parent="HBox/LobbyContainer/Chat/VBoxContainer/Chat/VBoxContainer"]
 unique_name_in_owner = true
@@ -370,17 +550,6 @@ placeholder_text = "Chat Text Here"
 [node name="SubmitChat" type="Button" parent="HBox/LobbyContainer/Chat/VBoxContainer/Chat/VBoxContainer"]
 layout_mode = 2
 text = ">"
-
-[node name="UsernameContainer" type="TabContainer" parent="HBox/LobbyContainer/Chat/VBoxContainer/Chat/VBoxContainer"]
-unique_name_in_owner = true
-layout_mode = 2
-current_tab = 0
-
-[node name="username" type="TextEdit" parent="HBox/LobbyContainer/Chat/VBoxContainer/Chat/VBoxContainer/UsernameContainer"]
-layout_mode = 2
-editable = false
-wrap_mode = 1
-metadata/_tab_index = 0
 
 [node name="JoinDirectChat" type="Button" parent="HBox/LobbyContainer/Chat/VBoxContainer"]
 layout_mode = 2
@@ -426,7 +595,6 @@ layout_mode = 2
 text = "Yes"
 
 [node name="TradeSystem" type="PanelContainer" parent="HBox/LobbyContainer"]
-visible = false
 layout_mode = 2
 metadata/_tab_index = 7
 
@@ -536,10 +704,14 @@ custom_minimum_size = Vector2(250, 0)
 layout_mode = 2
 size_flags_vertical = 8
 
-[connection signal="button_down" from="HBox/LobbyContainer/Friend List/HBoxContainer/VBox/BlockFriends" to="." method="_on_block_friends_button_down"]
+[node name="Popup" parent="." instance=ExtResource("7_tv77q")]
+position = Vector2i(0, 36)
+visible = false
+
 [connection signal="button_down" from="HBox/LobbyContainer/Friend List/HBoxContainer/VBox/GridContainer/AddFriend" to="." method="_on_add_friend_button_down"]
-[connection signal="button_down" from="HBox/LobbyContainer/Friend List/HBoxContainer/VBox/RemoveFriend" to="." method="_on_remove_friend_button_down"]
-[connection signal="button_down" from="HBox/LobbyContainer/Friend List/HBoxContainer/VBox/GetFriends" to="." method="_on_get_friends_button_down"]
+[connection signal="button_down" from="HBox/LobbyContainer/Friend List/HBoxContainer/VBox/GridContainer/BlockFriends" to="." method="_on_block_friends_button_down"]
+[connection signal="button_down" from="HBox/LobbyContainer/Friend List/HBoxContainer/VBox/GridContainer/RemoveFriend" to="." method="_on_remove_friend_button_down"]
+[connection signal="button_down" from="HBox/LobbyContainer/Friend List/HBoxContainer/VBox/GridContainer/GetFriends" to="." method="_on_get_friends_button_down"]
 [connection signal="button_down" from="HBox/LobbyContainer/Match Finder/VBoxContainer/GridContainer/JoinCreateMatch" to="." method="_on_join_create_match_button_down"]
 [connection signal="button_down" from="HBox/LobbyContainer/Match Finder/VBoxContainer/GridContainer/Ping" to="." method="_on_ping_button_down"]
 [connection signal="button_down" from="HBox/LobbyContainer/Match Finder/VBoxContainer/GridContainer/Matchmaking" to="." method="_on_matchmaking_button_down"]
@@ -547,20 +719,22 @@ size_flags_vertical = 8
 [connection signal="button_down" from="HBox/LobbyContainer/Data Panel/VBoxContainer/StoreData" to="." method="_on_store_data_button_down"]
 [connection signal="button_down" from="HBox/LobbyContainer/Data Panel/VBoxContainer/GetData" to="." method="_on_get_data_button_down"]
 [connection signal="button_down" from="HBox/LobbyContainer/Data Panel/VBoxContainer/ListData" to="." method="_on_list_data_button_down"]
-[connection signal="button_down" from="HBox/LobbyContainer/Group Admin Panel/VBoxContainer/GetGroupMemebers" to="." method="_on_get_group_memebers_button_down"]
-[connection signal="button_down" from="HBox/LobbyContainer/Group Admin Panel/VBoxContainer/CreateGroup" to="." method="_on_create_group_button_down"]
-[connection signal="button_down" from="HBox/LobbyContainer/Group Manager/VBoxContainer/CreateGroup" to="." method="_on_create_group_button_down"]
-[connection signal="button_down" from="HBox/LobbyContainer/Group Manager/VBoxContainer/AddUserToGroup" to="." method="_on_add_user_to_group_button_down"]
-[connection signal="button_down" from="HBox/LobbyContainer/Group Manager/VBoxContainer/AddUserToGroup2" to="." method="_on_add_user_to_group_2_button_down"]
-[connection signal="button_down" from="HBox/LobbyContainer/Group Manager/VBoxContainer/List Groups" to="." method="_on_list_groups_button_down"]
-[connection signal="toggled" from="HBox/LobbyContainer/Group Manager/VBoxContainer/CheckButton" to="." method="_on_check_button_toggled"]
-[connection signal="button_down" from="HBox/LobbyContainer/Group Manager/VBoxContainer/PromoteUser" to="." method="_on_promote_user_button_down"]
-[connection signal="button_down" from="HBox/LobbyContainer/Group Manager/VBoxContainer/KickUser" to="." method="_on_kick_user_button_down"]
-[connection signal="button_down" from="HBox/LobbyContainer/Group Manager/VBoxContainer/DemoteUser" to="." method="_on_demote_user_button_down"]
-[connection signal="button_down" from="HBox/LobbyContainer/Group Manager/VBoxContainer/LeaveGroup" to="." method="_on_leave_group_button_down"]
-[connection signal="button_down" from="HBox/LobbyContainer/Group Manager/VBoxContainer/DeleteGroup" to="." method="_on_delete_group_button_down"]
+[connection signal="pressed" from="HBox/LobbyContainer/Group Admin Panel/VBoxContainer/GetGroupInformation" to="." method="_on_get_group_information_button_down"]
+[connection signal="pressed" from="HBox/LobbyContainer/Group Admin Panel/VBoxContainer/CloseSelectedGroup" to="." method="_on_close_group_pressed"]
+[connection signal="pressed" from="HBox/LobbyContainer/Group Admin Panel/VBoxContainer/DeleteSelectedGroup" to="." method="_on_delete_group_pressed"]
+[connection signal="button_down" from="HBox/LobbyContainer/Group Manager/TabContainer/Create Group/VBoxContainer/CreateGroup2" to="." method="_on_create_group_button_down"]
+[connection signal="button_down" from="HBox/LobbyContainer/Group Manager/TabContainer/Group Query/ScrollContainer/_/HBoxContainer2/VBoxContainer/List Groups" to="." method="_on_list_groups_button_down"]
+[connection signal="value_changed" from="HBox/LobbyContainer/Group Manager/TabContainer/Group Query/ScrollContainer/_/HBoxContainer2/VBoxContainer/GroupListingSlider" to="." method="_on_group_listing_slider_value_changed"]
+[connection signal="pressed" from="HBox/LobbyContainer/Group Manager/TabContainer/Manage Groups/VBoxContainer/UpdateAvailableGroups" to="." method="_on_update_available_groups_pressed"]
+[connection signal="item_selected" from="HBox/LobbyContainer/Group Manager/TabContainer/Manage Groups/VBoxContainer/SelectAGroup/GroupsAvailableToUser" to="." method="_on_groups_available_to_user_item_selected"]
+[connection signal="button_down" from="HBox/LobbyContainer/Group Manager/TabContainer/Manage Groups/VBoxContainer/GridContainer2/PromoteUser" to="." method="_on_promote_user_button_down"]
+[connection signal="button_down" from="HBox/LobbyContainer/Group Manager/TabContainer/Manage Groups/VBoxContainer/GridContainer2/KickUser" to="." method="_on_kick_user_button_down"]
+[connection signal="button_down" from="HBox/LobbyContainer/Group Manager/TabContainer/Manage Groups/VBoxContainer/GridContainer2/DemoteUser" to="." method="_on_demote_user_button_down"]
+[connection signal="button_down" from="HBox/LobbyContainer/Group Manager/TabContainer/Manage Groups/VBoxContainer/AddUserToGroup2" to="." method="_on_add_user_to_group_2_button_down"]
+[connection signal="button_down" from="HBox/LobbyContainer/Group Manager/TabContainer/Manage Groups/VBoxContainer/HBoxContainer/LeaveGroup" to="." method="_on_leave_group_button_down"]
+[connection signal="button_down" from="HBox/LobbyContainer/Group Manager/TabContainer/Manage Groups/VBoxContainer/HBoxContainer/DeleteGroup" to="." method="_on_delete_group_button_down"]
+[connection signal="button_down" from="HBox/LobbyContainer/Chat/VBoxContainer/HBoxContainer/CreateChatRoom" to="." method="_on_join_chat_room_button_down"]
 [connection signal="button_down" from="HBox/LobbyContainer/Chat/VBoxContainer/HBoxContainer/JoinGroupChatRoom" to="." method="_on_join_group_chat_room_button_down"]
-[connection signal="button_down" from="HBox/LobbyContainer/Chat/VBoxContainer/HBoxContainer/JoinChatRoom" to="." method="_on_join_chat_room_button_down"]
 [connection signal="button_down" from="HBox/LobbyContainer/Chat/VBoxContainer/Chat/VBoxContainer/SubmitChat" to="." method="_on_submit_chat_button_down"]
 [connection signal="button_down" from="HBox/LobbyContainer/Chat/VBoxContainer/JoinDirectChat" to="." method="_on_join_direct_chat_button_down"]
 [connection signal="button_down" from="HBox/LobbyContainer/CreateParty/VBoxContainer/CreateParty" to="." method="_on_create_party_button_down"]

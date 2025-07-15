@@ -1,6 +1,6 @@
 [gd_scene load_steps=2 format=3 uid="uid://dd2ekb3yor3hh"]
 
-[ext_resource type="Script" path="res://Authentication/LoginPanel/LoginPanel.gd" id="1_vpvtg"]
+[ext_resource type="Script" uid="uid://brhcnk2jvvsf" path="res://Authentication/LoginPanel/LoginPanel.gd" id="1_vpvtg"]
 
 [node name="LoginPanel" type="PanelContainer"]
 size_flags_horizontal = 4
