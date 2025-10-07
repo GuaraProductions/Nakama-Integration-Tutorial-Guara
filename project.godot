@@ -11,17 +11,30 @@ config_version=5
 [application]
 
 config/name="Nakama Integration Tutorial"
-config/features=PackedStringArray("4.4", "Forward Plus")
+config/features=PackedStringArray("4.5", "Forward Plus")
 config/icon="res://icon.svg"
 
 [autoload]
 
 Nakama="*res://addons/com.heroiclabs.nakama/Nakama.gd"
+NakamaManager="*res://Nakama/NakamaManager.tscn"
+BetterTerrain="*res://addons/better-terrain/BetterTerrain.gd"
+GuguGlobal="*res://Teste/GuguGlobal.gd"
 
 [display]
 
-window/stretch/mode="canvas_items"
+window/stretch/mode="viewport"
+window/stretch/aspect="ignore"
 
 [dotnet]
 
 project/assembly_name="Nakama Integration Tutorial"
+
+[editor_plugins]
+
+enabled=PackedStringArray("res://addons/better-terrain/plugin.cfg")
+
+[layer_names]
+
+2d_physics/layer_1="World"
+2d_physics/layer_2="EndFlag"

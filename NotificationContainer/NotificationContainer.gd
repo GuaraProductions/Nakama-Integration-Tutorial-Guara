@@ -29,6 +29,8 @@ func create_notification(text: String,
 			notification_label.show_accept_label(text)
 		NotificationType.ERROR:
 			notification_label.show_error_label(text)
+		NotificationType.WARNING:
+			notification_label.show_warning_label(text)
 
 func handle_exception(status_code: int) -> void:
 		match status_code:
@@ -38,3 +40,12 @@ func handle_exception(status_code: int) -> void:
 			_:
 				create_notification("Erro credenciais incorretas!",
 									NotificationContainer.NotificationType.ERROR)
+
+static func nakama_notification_code_to_notification(nakama_code: int) -> NotificationType:
+	
+	var notification_code : NotificationType 
+	
+	if nakama_code >= 0 and nakama_code <= 7:
+		notification_code = NotificationType.OK
+		
+	return notification_code

@@ -1,0 +1,12 @@
+[gd_scene load_steps=3 format=3 uid="uid://c3sg5fopn8y8x"]
+
+[ext_resource type="Script" uid="uid://f2tfbh5o4p87" path="res://Teste/teste_parao_gugu.gd" id="1_1sl0r"]
+[ext_resource type="Script" uid="uid://dqgjbu04233l0" path="res://Teste/character_body.gd" id="2_d3y0o"]
+
+[node name="TesteParaoGugu" type="Node"]
+script = ExtResource("1_1sl0r")
+
+[node name="Node1" type="Node" parent="."]
+
+[node name="CharacterBody" type="CharacterBody2D" parent="." groups=["Player"]]
+script = ExtResource("2_d3y0o")

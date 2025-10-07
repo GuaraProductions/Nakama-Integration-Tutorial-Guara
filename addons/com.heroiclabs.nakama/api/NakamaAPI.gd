@@ -1597,7 +1597,7 @@ class ApiMatch extends NakamaAsyncResult:
 		"tick_rate": {"name": "_tick_rate", "type": TYPE_INT, "required": false},
 	}
 
-	# True if it's an server-managed authoritative match, false otherwise.
+	## True if it's an server-managed authoritative match, false otherwise.
 	var _authoritative
 	var authoritative : bool:
 		get:
@@ -1609,25 +1609,25 @@ class ApiMatch extends NakamaAsyncResult:
 		get:
 			return "" if not _handler_name is String else String(_handler_name)
 
-	# Match label, if any.
+	## Match label, if any.
 	var _label
 	var label : String:
 		get:
 			return "" if not _label is String else String(_label)
 
-	# The ID of the match, can be used to join.
+	## The ID of the match, can be used to join.
 	var _match_id
 	var match_id : String:
 		get:
 			return "" if not _match_id is String else String(_match_id)
 
-	# Current number of users in the match.
+	## Current number of users in the match.
 	var _size
 	var size : int:
 		get:
 			return 0 if not _size is int else int(_size)
 
-	#
+	##
 	var _tick_rate
 	var tick_rate : int:
 		get:

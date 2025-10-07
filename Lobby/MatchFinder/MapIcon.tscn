@@ -1,0 +1,24 @@
+[gd_scene load_steps=2 format=3 uid="uid://hvsilsjx00kd"]
+
+[ext_resource type="Script" uid="uid://cmmwnemc3r6nd" path="res://Lobby/MatchFinder/MapIcon.gd" id="1_k3yrh"]
+
+[node name="MapIcon" type="PanelContainer"]
+custom_minimum_size = Vector2(200, 0)
+script = ExtResource("1_k3yrh")
+
+[node name="_" type="VBoxContainer" parent="."]
+layout_mode = 2
+
+[node name="MapTitle" type="Label" parent="_"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "NOT DEFINED"
+horizontal_alignment = 1
+
+[node name="MapPreview" type="TextureButton" parent="_"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_vertical = 3
+stretch_mode = 5
+
+[connection signal="pressed" from="_/MapPreview" to="." method="_on_button_pressed"]

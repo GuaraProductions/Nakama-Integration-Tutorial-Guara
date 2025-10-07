@@ -1,0 +1,74 @@
+[gd_scene load_steps=3 format=3 uid="uid://cu2rcrnq0w6n5"]
+
+[ext_resource type="Script" uid="uid://mayyjvfg1lla" path="res://Lobby/Leaderboard/leaderboard.gd" id="1_y7qe5"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_i8gjh"]
+bg_color = Color(0.00566115, 0.0056611523, 0.005661145, 1)
+expand_margin_left = 15.0
+expand_margin_top = 15.0
+expand_margin_right = 15.0
+expand_margin_bottom = 15.0
+
+[node name="Leaderboard" type="PanelContainer"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+script = ExtResource("1_y7qe5")
+metadata/_tab_index = 7
+
+[node name="_" type="VBoxContainer" parent="."]
+layout_mode = 2
+
+[node name="Title" type="Label" parent="_"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 32
+text = "Placar"
+
+[node name="Options" type="HBoxContainer" parent="_"]
+layout_mode = 2
+
+[node name="MapSelectorLabel" type="Label" parent="_/Options"]
+layout_mode = 2
+text = "Selecione o mapa"
+
+[node name="MapSelectorOptionButton" type="OptionButton" parent="_/Options"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="UsertTypeLabel" type="Label" parent="_/Options"]
+layout_mode = 2
+text = "Tipo de usuários"
+
+[node name="UserTypeOptionButton" type="OptionButton" parent="_/Options"]
+unique_name_in_owner = true
+layout_mode = 2
+selected = 0
+item_count = 3
+popup/item_0/text = "Todos"
+popup/item_0/id = 0
+popup/item_1/text = "Amigos"
+popup/item_1/id = 1
+popup/item_2/text = "Grupos"
+popup/item_2/id = 2
+
+[node name="UpdateLeaderboard" type="Button" parent="_/Options"]
+layout_mode = 2
+size_flags_horizontal = 10
+text = "Atualizar Placar"
+
+[node name="Scoring" type="ScrollContainer" parent="_"]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_styles/panel = SubResource("StyleBoxFlat_i8gjh")
+
+[node name="ScoringLabel" type="Label" parent="_/Scoring"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[connection signal="pressed" from="_/Options/UpdateLeaderboard" to="." method="_on_update_leaderboard_pressed"]

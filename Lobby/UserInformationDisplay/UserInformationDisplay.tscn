@@ -1,7 +1,8 @@
-[gd_scene load_steps=6 format=3 uid="uid://cvedwg86rsyp2"]
+[gd_scene load_steps=7 format=3 uid="uid://cvedwg86rsyp2"]
 
 [ext_resource type="Script" uid="uid://c3sqlq6m122n3" path="res://Lobby/UserInformationDisplay/UserInformationDisplay.gd" id="1_gldpw"]
 [ext_resource type="StyleBox" uid="uid://dqy54jim8vxkk" path="res://Styles/DarkBackgroundLabel.tres" id="1_k82p0"]
+[ext_resource type="PackedScene" uid="uid://bt0llee0anwkk" path="res://Lobby/Friends/FriendsList/FriendsList.tscn" id="3_b2vub"]
 
 [sub_resource type="Theme" id="Theme_1nxb0"]
 Label/font_sizes/font_size = 12
@@ -24,7 +25,7 @@ font_size = 18
 [node name="UserInformationDisplay" type="PanelContainer"]
 offset_right = 306.0
 offset_bottom = 139.0
-size_flags_vertical = 0
+size_flags_vertical = 3
 theme = SubResource("Theme_1nxb0")
 theme_override_styles/panel = SubResource("StyleBoxFlat_pcwbd")
 script = ExtResource("1_gldpw")
@@ -85,6 +86,17 @@ editable = false
 [node name="CopyEmail" type="Button" parent="VBox/Grid"]
 layout_mode = 2
 text = "Copy"
+
+[node name="Tabs" type="TabContainer" parent="VBox"]
+layout_mode = 2
+size_flags_vertical = 3
+current_tab = 0
+
+[node name="Friends" parent="VBox/Tabs" instance=ExtResource("3_b2vub")]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_vertical = 3
+metadata/_tab_index = 0
 
 [connection signal="pressed" from="VBox/HBox/Button" to="." method="_on_button_pressed"]
 [connection signal="pressed" from="VBox/Grid/CopyUser" to="." method="_on_copy_user_pressed"]

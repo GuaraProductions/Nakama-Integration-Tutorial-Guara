@@ -1,0 +1,26 @@
+[gd_scene load_steps=2 format=3 uid="uid://c25altqf87k2j"]
+
+[ext_resource type="Script" uid="uid://c67ox75qw64tx" path="res://Lobby/Friends/FriendHBoxContainer/FriendHBoxContainer.gd" id="1_xe2aw"]
+
+[node name="FriendHBoxContainer" type="PanelContainer"]
+anchors_preset = 10
+anchor_right = 1.0
+offset_bottom = 8.0
+grow_horizontal = 2
+size_flags_vertical = 0
+script = ExtResource("1_xe2aw")
+
+[node name="MenuButton" type="MenuButton" parent="."]
+layout_mode = 2
+size_flags_vertical = 0
+item_count = 5
+popup/item_0/text = "Trade"
+popup/item_0/id = 0
+popup/item_1/text = "Chat"
+popup/item_1/id = 1
+popup/item_2/text = "Block"
+popup/item_2/id = 2
+popup/item_3/text = "Delete"
+popup/item_3/id = 3
+popup/item_4/text = "Invite to Party"
+popup/item_4/id = 4

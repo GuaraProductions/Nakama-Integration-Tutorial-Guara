@@ -1,0 +1,71 @@
+[gd_scene load_steps=5 format=3 uid="uid://bt0llee0anwkk"]
+
+[ext_resource type="Script" uid="uid://bd320xu5xgu7q" path="res://Lobby/Friends/FriendsList/FriendsList.gd" id="1_tucqs"]
+[ext_resource type="PackedScene" uid="uid://c25altqf87k2j" path="res://Lobby/Friends/FriendHBoxContainer/FriendHBoxContainer.tscn" id="2_rwe42"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_tmgb8"]
+content_margin_left = 7.0
+content_margin_top = 7.0
+content_margin_right = 7.0
+content_margin_bottom = 7.0
+bg_color = Color(0.315076, 0.398015, 0.42524, 1)
+corner_radius_top_left = 15
+corner_radius_top_right = 15
+corner_radius_bottom_right = 15
+corner_radius_bottom_left = 5
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_u303v"]
+content_margin_left = 15.0
+content_margin_top = 15.0
+content_margin_right = 15.0
+content_margin_bottom = 15.0
+bg_color = Color(0.139728, 0.149761, 0.185489, 1)
+corner_radius_top_left = 15
+corner_radius_top_right = 15
+corner_radius_bottom_right = 15
+corner_radius_bottom_left = 15
+
+[node name="FriendsBox" type="PanelContainer"]
+custom_minimum_size = Vector2(250, 0)
+anchors_preset = 9
+anchor_bottom = 1.0
+offset_right = 166.0
+grow_vertical = 2
+size_flags_horizontal = 3
+theme_override_styles/panel = SubResource("StyleBoxFlat_tmgb8")
+script = ExtResource("1_tucqs")
+friends_packed_scene = ExtResource("2_rwe42")
+
+[node name="VBox" type="VBoxContainer" parent="."]
+layout_mode = 2
+
+[node name="HBoxContainer" type="HBoxContainer" parent="VBox"]
+layout_mode = 2
+
+[node name="AddFriendText" type="LineEdit" parent="VBox/HBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+placeholder_text = "Friend's name"
+alignment = 1
+
+[node name="AddFriend" type="Button" parent="VBox/HBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "+"
+
+[node name="Panel" type="PanelContainer" parent="VBox"]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_styles/panel = SubResource("StyleBoxFlat_u303v")
+
+[node name="ScrollContainer" type="ScrollContainer" parent="VBox/Panel"]
+layout_mode = 2
+
+[node name="FriendsContainer" type="VBoxContainer" parent="VBox/Panel/ScrollContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[connection signal="pressed" from="VBox/HBoxContainer/AddFriend" to="." method="_on_add_friend_pressed"]

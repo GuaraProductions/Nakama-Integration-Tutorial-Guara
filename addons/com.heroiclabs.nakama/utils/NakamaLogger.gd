@@ -3,14 +3,23 @@ class_name NakamaLogger
 
 enum LOG_LEVEL {NONE, ERROR, WARNING, INFO, VERBOSE, DEBUG}
 
-var _level = LOG_LEVEL.ERROR
+var disabled : bool
+
+var _level = LOG_LEVEL.NONE
 var _module = "Nakama"
 
-func _init(p_module : String = "Nakama", p_level : int = LOG_LEVEL.ERROR):
+func _init(p_module : String = "Nakama", 
+		   p_level : int = LOG_LEVEL.NONE,
+		   p_disabled : bool = true):
 	_level = p_level
 	_module = p_module
+	disabled = p_disabled
 
 func _log(level : int, msg):
+	
+	if disabled:
+		return
+	
 	if level <= _level:
 		if level == LOG_LEVEL.ERROR:
 			printerr("=== %s : ERROR === %s" % [_module, str(msg)])
