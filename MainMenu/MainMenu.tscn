@@ -1,10 +1,10 @@
-[gd_scene load_steps=14 format=3 uid="uid://p2ptqa1u1n1k"]
+[gd_scene load_steps=13 format=3 uid="uid://p2ptqa1u1n1k"]
 
 [ext_resource type="Script" uid="uid://bkso6trqnr35v" path="res://MainMenu/MainMenu.gd" id="1_mtcsr"]
-[ext_resource type="PackedScene" uid="uid://ctlppxshfqr7i" path="res://Lobby/MatchFinder/MatchFinder.tscn" id="2_bsanu"]
-[ext_resource type="PackedScene" uid="uid://bg6xgsfypi4gr" path="res://NotificationContainer/NotificationContainer.tscn" id="2_lanui"]
-[ext_resource type="PackedScene" uid="uid://cvedwg86rsyp2" path="res://Lobby/UserInformationDisplay/UserInformationDisplay.tscn" id="2_qmkq0"]
-[ext_resource type="PackedScene" uid="uid://cu2rcrnq0w6n5" path="res://Lobby/Leaderboard/Leaderboard.tscn" id="3_kftou"]
+[ext_resource type="PackedScene" uid="uid://ctlppxshfqr7i" path="res://MainMenu/Lobby/MatchFinder/MatchFinder.tscn" id="2_bsanu"]
+[ext_resource type="PackedScene" uid="uid://cvedwg86rsyp2" path="res://MainMenu/Lobby/UserInformationDisplay/UserInformationDisplay.tscn" id="2_qmkq0"]
+[ext_resource type="PackedScene" uid="uid://cu2rcrnq0w6n5" path="res://MainMenu/Lobby/Leaderboard/Leaderboard.tscn" id="3_kftou"]
+[ext_resource type="PackedScene" uid="uid://bdw5y4b5om737" path="res://MainMenu/Lobby/Party/PartyScreen.tscn" id="3_nre7b"]
 [ext_resource type="PackedScene" uid="uid://dd2ekb3yor3hh" path="res://MainMenu/Authentication/LoginPanel/LoginPanel.tscn" id="4_4xlfs"]
 [ext_resource type="PackedScene" uid="uid://xq36w5vrpfwb" path="res://MainMenu/Authentication/RegisterPanel/RegisterPanel.tscn" id="5_wys0s"]
 [ext_resource type="PackedScene" uid="uid://32gcwea4fq4t" path="res://Popup/Message/PopupBox.tscn" id="7_tv77q"]
@@ -27,13 +27,6 @@ content_margin_right = 15.0
 content_margin_bottom = 15.0
 bg_color = Color(0.0728426, 0.0728426, 0.0728426, 1)
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_tv77q"]
-content_margin_left = 15.0
-content_margin_top = 15.0
-content_margin_right = 15.0
-content_margin_bottom = 5.0
-bg_color = Color(0.0728426, 0.0728427, 0.0728426, 1)
-
 [node name="Game" type="MarginContainer"]
 anchors_preset = 15
 anchor_right = 1.0
@@ -54,12 +47,12 @@ layout_mode = 2
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
-current_tab = 0
+current_tab = 5
 
-[node name="Match Finder" parent="HBox/LobbyContainer" node_paths=PackedStringArray("notification_container") instance=ExtResource("2_bsanu")]
+[node name="Match Finder" parent="HBox/LobbyContainer" instance=ExtResource("2_bsanu")]
 unique_name_in_owner = true
+visible = false
 layout_mode = 2
-notification_container = NodePath("../../../NotificationContainer")
 
 [node name="TradeSystem" type="PanelContainer" parent="HBox/LobbyContainer"]
 visible = false
@@ -198,84 +191,14 @@ unique_name_in_owner = true
 layout_mode = 2
 autowrap_mode = 3
 
-[node name="Group Admin Panel" type="PanelContainer" parent="HBox/LobbyContainer"]
-visible = false
-custom_minimum_size = Vector2(250, 0)
-layout_mode = 2
-metadata/_tab_index = 3
-
-[node name="VBoxContainer" type="VBoxContainer" parent="HBox/LobbyContainer/Group Admin Panel"]
-layout_mode = 2
-
-[node name="GroupName2" type="LineEdit" parent="HBox/LobbyContainer/Group Admin Panel/VBoxContainer"]
-unique_name_in_owner = true
-layout_mode = 2
-placeholder_text = "Name of group"
-
-[node name="GetGroupInformation" type="Button" parent="HBox/LobbyContainer/Group Admin Panel/VBoxContainer"]
-layout_mode = 2
-text = "Select Group"
-
-[node name="DeleteSelectedGroup" type="Button" parent="HBox/LobbyContainer/Group Admin Panel/VBoxContainer"]
-layout_mode = 2
-text = "Delete Group"
-
-[node name="SelectedGroup" type="PanelContainer" parent="HBox/LobbyContainer/Group Admin Panel/VBoxContainer"]
-unique_name_in_owner = true
-layout_mode = 2
-size_flags_vertical = 3
-
-[node name="ScrollContainer" type="ScrollContainer" parent="HBox/LobbyContainer/Group Admin Panel/VBoxContainer/SelectedGroup"]
-layout_mode = 2
-
-[node name="_" type="VBoxContainer" parent="HBox/LobbyContainer/Group Admin Panel/VBoxContainer/SelectedGroup/ScrollContainer"]
-layout_mode = 2
-size_flags_horizontal = 3
-size_flags_vertical = 3
-
-[node name="SelectedGroupName" type="Label" parent="HBox/LobbyContainer/Group Admin Panel/VBoxContainer/SelectedGroup/ScrollContainer/_"]
-unique_name_in_owner = true
-layout_mode = 2
-text = "Group name:"
-
-[node name="SelectedGroupDescription" type="Label" parent="HBox/LobbyContainer/Group Admin Panel/VBoxContainer/SelectedGroup/ScrollContainer/_"]
-unique_name_in_owner = true
-layout_mode = 2
-text = "Group description:"
-
-[node name="SelectedGroupID" type="Label" parent="HBox/LobbyContainer/Group Admin Panel/VBoxContainer/SelectedGroup/ScrollContainer/_"]
-unique_name_in_owner = true
-layout_mode = 2
-text = "Group ID:"
-
-[node name="SelectedGroupIsOpen" type="Label" parent="HBox/LobbyContainer/Group Admin Panel/VBoxContainer/SelectedGroup/ScrollContainer/_"]
-unique_name_in_owner = true
-layout_mode = 2
-text = "Is open:"
-
-[node name="GroupMembers" type="Label" parent="HBox/LobbyContainer/Group Admin Panel/VBoxContainer/SelectedGroup/ScrollContainer/_"]
-layout_mode = 2
-theme_override_font_sizes/font_size = 32
-text = "Group Members:"
-
-[node name="PanelContainer" type="PanelContainer" parent="HBox/LobbyContainer/Group Admin Panel/VBoxContainer/SelectedGroup/ScrollContainer/_"]
-layout_mode = 2
-size_flags_vertical = 3
-theme_override_styles/panel = SubResource("StyleBoxFlat_tv77q")
-
-[node name="GroupMembersList" type="VBoxContainer" parent="HBox/LobbyContainer/Group Admin Panel/VBoxContainer/SelectedGroup/ScrollContainer/_/PanelContainer"]
-unique_name_in_owner = true
-layout_mode = 2
-size_flags_vertical = 3
-
 [node name="Group Manager" type="PanelContainer" parent="HBox/LobbyContainer"]
 visible = false
 layout_mode = 2
-metadata/_tab_index = 4
+metadata/_tab_index = 3
 
 [node name="TabContainer" type="TabContainer" parent="HBox/LobbyContainer/Group Manager"]
 layout_mode = 2
-current_tab = 1
+current_tab = 2
 
 [node name="Create Group" type="MarginContainer" parent="HBox/LobbyContainer/Group Manager/TabContainer"]
 visible = false
@@ -321,6 +244,7 @@ size_flags_vertical = 0
 text = "Create Group"
 
 [node name="Group Query" type="MarginContainer" parent="HBox/LobbyContainer/Group Manager/TabContainer"]
+visible = false
 layout_mode = 2
 theme_override_constants/margin_left = 15
 theme_override_constants/margin_top = 15
@@ -398,7 +322,6 @@ size_flags_horizontal = 3
 size_flags_vertical = 3
 
 [node name="Manage Groups" type="MarginContainer" parent="HBox/LobbyContainer/Group Manager/TabContainer"]
-visible = false
 layout_mode = 2
 theme_override_constants/margin_left = 15
 theme_override_constants/margin_top = 15
@@ -525,7 +448,7 @@ text = "Delete Group"
 [node name="Chat" type="PanelContainer" parent="HBox/LobbyContainer"]
 visible = false
 layout_mode = 2
-metadata/_tab_index = 5
+metadata/_tab_index = 4
 
 [node name="VBoxContainer" type="VBoxContainer" parent="HBox/LobbyContainer/Chat"]
 layout_mode = 2
@@ -581,67 +504,14 @@ placeholder_text = "Chat Text Here"
 layout_mode = 2
 text = ">"
 
-[node name="CreateParty" type="PanelContainer" parent="HBox/LobbyContainer"]
-visible = false
-layout_mode = 2
-metadata/_tab_index = 6
-
-[node name="VBoxContainer" type="VBoxContainer" parent="HBox/LobbyContainer/CreateParty"]
-layout_mode = 2
-
-[node name="PartyIsOpenCheckBox" type="CheckBox" parent="HBox/LobbyContainer/CreateParty/VBoxContainer"]
+[node name="Party" parent="HBox/LobbyContainer" instance=ExtResource("3_nre7b")]
 unique_name_in_owner = true
 layout_mode = 2
-text = " Party is open"
-
-[node name="CreateParty" type="Button" parent="HBox/LobbyContainer/CreateParty/VBoxContainer"]
-layout_mode = 2
-text = "Create Party"
-
-[node name="Panel" type="PanelContainer" parent="HBox/LobbyContainer/CreateParty/VBoxContainer"]
-layout_mode = 2
-
-[node name="VBoxContainer" type="VBoxContainer" parent="HBox/LobbyContainer/CreateParty/VBoxContainer/Panel"]
-layout_mode = 2
-
-[node name="HBoxContainer" type="HBoxContainer" parent="HBox/LobbyContainer/CreateParty/VBoxContainer/Panel/VBoxContainer"]
-layout_mode = 2
-
-[node name="Label" type="Label" parent="HBox/LobbyContainer/CreateParty/VBoxContainer/Panel/VBoxContainer/HBoxContainer"]
-layout_mode = 2
-text = "Party ID: "
-
-[node name="LineEdit" type="LineEdit" parent="HBox/LobbyContainer/CreateParty/VBoxContainer/Panel/VBoxContainer/HBoxContainer"]
-layout_mode = 2
-size_flags_horizontal = 3
-
-[node name="Button" type="Button" parent="HBox/LobbyContainer/CreateParty/VBoxContainer/Panel/VBoxContainer"]
-layout_mode = 2
-text = "Join Party"
-
-[node name="ChannelMessagePanel" type="PanelContainer" parent="HBox/LobbyContainer/CreateParty/VBoxContainer"]
-unique_name_in_owner = true
-layout_mode = 2
-
-[node name="VBoxContainer" type="VBoxContainer" parent="HBox/LobbyContainer/CreateParty/VBoxContainer/ChannelMessagePanel"]
-layout_mode = 2
-
-[node name="ChannelMessageLabel" type="Label" parent="HBox/LobbyContainer/CreateParty/VBoxContainer/ChannelMessagePanel/VBoxContainer"]
-unique_name_in_owner = true
-layout_mode = 2
-text = "Join Party?"
-
-[node name="JoinPartyNo" type="Button" parent="HBox/LobbyContainer/CreateParty/VBoxContainer/ChannelMessagePanel/VBoxContainer"]
-layout_mode = 2
-text = "No"
-
-[node name="JoinPartyYes" type="Button" parent="HBox/LobbyContainer/CreateParty/VBoxContainer/ChannelMessagePanel/VBoxContainer"]
-layout_mode = 2
-text = "Yes"
 
 [node name="Leaderboard" parent="HBox/LobbyContainer" instance=ExtResource("3_kftou")]
 visible = false
 layout_mode = 2
+metadata/_tab_index = 6
 
 [node name="UserInformationDisplay" parent="HBox" instance=ExtResource("2_qmkq0")]
 unique_name_in_owner = true
@@ -665,10 +535,6 @@ metadata/_tab_index = 0
 visible = false
 layout_mode = 2
 metadata/_tab_index = 1
-
-[node name="NotificationContainer" parent="." instance=ExtResource("2_lanui")]
-layout_mode = 2
-size_flags_vertical = 8
 
 [node name="Popup" parent="." instance=ExtResource("7_tv77q")]
 position = Vector2i(0, 36)
@@ -751,8 +617,6 @@ text = "Join"
 [connection signal="button_down" from="HBox/LobbyContainer/Data Panel/VBoxContainer/StoreData" to="." method="_on_store_data_button_down"]
 [connection signal="button_down" from="HBox/LobbyContainer/Data Panel/VBoxContainer/GetData" to="." method="_on_get_data_button_down"]
 [connection signal="button_down" from="HBox/LobbyContainer/Data Panel/VBoxContainer/ListData" to="." method="_on_list_data_button_down"]
-[connection signal="pressed" from="HBox/LobbyContainer/Group Admin Panel/VBoxContainer/GetGroupInformation" to="." method="_on_get_group_information_button_down"]
-[connection signal="pressed" from="HBox/LobbyContainer/Group Admin Panel/VBoxContainer/DeleteSelectedGroup" to="." method="_on_delete_group_pressed"]
 [connection signal="button_down" from="HBox/LobbyContainer/Group Manager/TabContainer/Create Group/VBoxContainer/CreateGroup2" to="." method="_on_create_group_button_down"]
 [connection signal="button_down" from="HBox/LobbyContainer/Group Manager/TabContainer/Group Query/ScrollContainer/_/HBoxContainer2/VBoxContainer/List Groups" to="." method="_on_list_groups_button_down"]
 [connection signal="value_changed" from="HBox/LobbyContainer/Group Manager/TabContainer/Group Query/ScrollContainer/_/HBoxContainer2/VBoxContainer/GroupListingSlider" to="." method="_on_group_listing_slider_value_changed"]
@@ -772,8 +636,6 @@ text = "Join"
 [connection signal="button_down" from="HBox/LobbyContainer/Chat/VBoxContainer/HBoxContainer/JoinGroupChatRoom" to="." method="_on_join_group_chat_room_button_down"]
 [connection signal="button_down" from="HBox/LobbyContainer/Chat/VBoxContainer/JoinDirectChat" to="." method="_on_join_direct_chat_button_down"]
 [connection signal="button_down" from="HBox/LobbyContainer/Chat/VBoxContainer/Chat/VBoxContainer/SubmitChat" to="." method="_on_submit_chat_button_down"]
-[connection signal="button_down" from="HBox/LobbyContainer/CreateParty/VBoxContainer/CreateParty" to="." method="_on_create_party_button_down"]
-[connection signal="button_down" from="HBox/LobbyContainer/CreateParty/VBoxContainer/ChannelMessagePanel/VBoxContainer/JoinPartyNo" to="." method="_on_join_party_no_button_down"]
-[connection signal="button_down" from="HBox/LobbyContainer/CreateParty/VBoxContainer/ChannelMessagePanel/VBoxContainer/JoinPartyYes" to="." method="_on_join_party_yes_button_down"]
+[connection signal="invite_friend_to_party" from="HBox/UserInformationDisplay" to="." method="_on_user_information_display_invite_friend_to_party"]
 [connection signal="login" from="Authentication/Tabs/Login" to="." method="_on_login_pressed"]
 [connection signal="register_account" from="Authentication/Tabs/Register" to="." method="_on_register_account_pressed"]

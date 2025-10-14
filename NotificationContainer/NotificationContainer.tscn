@@ -4,6 +4,14 @@
 [ext_resource type="PackedScene" uid="uid://drftmonotxben" path="res://NotificationLabel/NotificationLabel.tscn" id="2_15k87"]
 
 [node name="NotificationContainer" type="VBoxContainer"]
+z_index = 1
+custom_minimum_size = Vector2(200, 0)
+anchors_preset = 11
+anchor_left = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 0
+grow_vertical = 2
 size_flags_horizontal = 8
 alignment = 2
 script = ExtResource("1_n2vfd")

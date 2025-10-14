@@ -16,42 +16,30 @@ var chatChannels := {}
 var players_username_display_name = {}
 var group_chats = {}
 
-var party
+
 
 var available_groups_to_current_user : Array
 var available_users_in_current_group : Array
 
 signal OnStartGame()
 
-@export var teste : int
-
 @onready var lobby_container : TabContainer = %LobbyContainer
 @onready var authentication : CenterContainer = $Authentication
 
 @onready var group_name : LineEdit = %GroupName
-@onready var group_name2 : LineEdit = %GroupName2
 @onready var group_desc : LineEdit = %GroupDesc
-@onready var group_members_list : VBoxContainer = %GroupMembersList
 @onready var group_query : LineEdit = %GroupQuery
 @onready var groups_query_vbox : VBoxContainer = %GroupsQueryVBox
 @onready var chat_name : LineEdit = %ChatName
 @onready var username_container : TabContainer = %UsernameContainer
-@onready var channel_message_panel : Control = %ChannelMessagePanel
-@onready var channel_message_label : Label = %ChannelMessageLabel
 @onready var chat_text_line_edit : LineEdit = %ChatTextLineEdit
 @onready var trade_vbox1 : VBoxContainer = %TradeVbox1
 @onready var trade_vbox2 : VBoxContainer = %TradeVBox2
 @onready var popup : Window = $Popup
 @onready var join_group_popup : Window = $JoinGroupChat
-@onready var selected_group: PanelContainer = %SelectedGroup
+@onready var party: PanelContainer = %Party
 
 @onready var user_information_display : PanelContainer = %UserInformationDisplay
-@onready var selected_group_name: Label = %SelectedGroupName
-@onready var selected_group_description: Label = %SelectedGroupDescription
-@onready var selected_group_id: Label = %SelectedGroupID
-@onready var selected_group_is_open: Label = %SelectedGroupIsOpen
-
-@onready var notification_container: NotificationContainer = $NotificationContainer
 @onready var group_listing_slider: HSlider = %GroupListingSlider
 @onready var group_listing_selected_label: Label = %GroupListingSelectedLabel
 @onready var groups_available_to_user: OptionButton = %GroupsAvailableToUser
@@ -74,7 +62,6 @@ signal OnStartGame()
 
 func _ready():
 
-	selected_group.visible = false
 	popup.visible = false
 	pending_to_join_section.visible = false
 	
@@ -160,11 +147,11 @@ func sendData(message):
 func _on_store_data_button_down():
 	
 	if collection_line_edit.text.is_empty():
-		notification_container.create_notification("Collection line edit vazio!", NotificationContainer.NotificationType.ERROR )
+		NotificationContainer.create_notification("Collection line edit vazio!", NotificationContainer.NotificationType.ERROR )
 		return
 		
 	if key_line_edit.text.is_empty():
-		notification_container.create_notification("Key line edit vazio!", NotificationContainer.NotificationType.ERROR )
+		NotificationContainer.create_notification("Key line edit vazio!", NotificationContainer.NotificationType.ERROR )
 		return
 	
 	var saveGame = {
@@ -191,19 +178,19 @@ func _on_store_data_button_down():
 	])
 	
 	if result.is_exception():
-		notification_container.create_notification("error %s" % str(result), NotificationContainer.NotificationType.ERROR )
+		NotificationContainer.create_notification("error %s" % str(result), NotificationContainer.NotificationType.ERROR )
 	else:
-		notification_container.create_notification("Objeto armazenado no banco de dados com sucesso!", NotificationContainer.NotificationType.OK)
+		NotificationContainer.create_notification("Objeto armazenado no banco de dados com sucesso!", NotificationContainer.NotificationType.OK)
 
 
 func _on_get_data_button_down():
 	
 	if collection_line_edit.text.is_empty():
-		notification_container.create_notification("Collection line edit vazio!", NotificationContainer.NotificationType.ERROR )
+		NotificationContainer.create_notification("Collection line edit vazio!", NotificationContainer.NotificationType.ERROR )
 		return
 		
 	if key_line_edit.text.is_empty():
-		notification_container.create_notification("Key line edit vazio!", NotificationContainer.NotificationType.ERROR )
+		NotificationContainer.create_notification("Key line edit vazio!", NotificationContainer.NotificationType.ERROR )
 		return
 	
 	var result = await NakamaManager.client.read_storage_objects_async(NakamaManager.session, [
@@ -211,7 +198,7 @@ func _on_get_data_button_down():
 	])
 	
 	if result.is_exception():
-		notification_container.create_notification("error %s" % str(result), NotificationContainer.NotificationType.ERROR )
+		NotificationContainer.create_notification("error %s" % str(result), NotificationContainer.NotificationType.ERROR )
 		return
 
 	data_from_store_label.text = ""
@@ -224,7 +211,7 @@ func _on_get_data_button_down():
 func _on_list_data_button_down():
 	
 	if collection_line_edit.text.is_empty():
-		notification_container.create_notification("Collection line edit vazio!", NotificationContainer.NotificationType.ERROR )
+		NotificationContainer.create_notification("Collection line edit vazio!", NotificationContainer.NotificationType.ERROR )
 		return
 	
 	data_from_store_label.text = ""
@@ -241,40 +228,6 @@ func _on_create_group_button_down():
 	var group = await NakamaManager.client.create_group_async(NakamaManager.session, group_name.text, group_desc.text, "" , "en", true, 32)
 	print(group)
 	
-
-func _on_get_group_information_button_down():
-	var result_group_information = await NakamaManager.client.list_groups_async(NakamaManager.session, group_name2.text, 1)
-	
-	if result_group_information.groups.size() == 0:
-		selected_group.visible = false
-		notification_container.create_notification("O grupo \"%s\" não existe!" % group_name2.text, NotificationContainer.NotificationType.ERROR )
-		group_name2.text = ""
-		removeMyChildren(group_members_list)
-		return
-		
-	group_name2.text = ""
-		
-	var group = result_group_information.groups[0]
-	
-	var result_users_information = await NakamaManager.client.list_group_users_async(NakamaManager.session, group.id)
-	
-	selected_group.visible = true
-	#print("TA AQUI AS INFORMACOES DO GRUPO!!!\n\n")
-	#print("result: ", result_group_information)
-	#print("ACABOU AQUI AS INFORMACOES DO GRUPO!!!\n\n")
-	
-	selected_group_name.text = "Group name: %s" % group.name
-	selected_group_description.text = "Group description: %s" % group.description
-	selected_group_id.text = "Group ID: %s" % group.id
-	selected_group_is_open.text = "Is open: %s" %  str(group.open)
-	
-	for i in result_users_information.group_users:
-		
-		var currentlabel = Label.new()
-		currentlabel.name = i.user.username
-		currentlabel.text = i.user.display_name
-		
-		group_members_list.add_child(currentlabel)
 		
 		#print("users in group " + group_name2.text  + i.user.username)
 		
@@ -296,13 +249,13 @@ func _on_add_user_to_group_button_down(group):
 	var result = await NakamaManager.client.join_group_async(NakamaManager.session, group.id)
 	
 	if result.is_exception():
-		notification_container.create_notification(
+		NotificationContainer.create_notification(
 			tr("Erro! Não foi possível entrar nesse grupo"),
 			NotificationContainer.NotificationType.ERROR
 		)
 	
 	else:
-		notification_container.create_notification(
+		NotificationContainer.create_notification(
 			tr("Solicitação para entrar no grupo \"%s\" enviada!" % [group.name]),
 			NotificationContainer.NotificationType.OK
 		)
@@ -320,7 +273,7 @@ func _on_delete_group_pressed() -> void:
 func _on_add_user_to_group_2_button_down():
 	
 	if selectedGroup == null or (selectedGroup and not "id" in selectedGroup):
-		notification_container.create_notification("Nenhum grupo foi selecionado", NotificationContainer.NotificationType.ERROR )
+		NotificationContainer.create_notification("Nenhum grupo foi selecionado", NotificationContainer.NotificationType.ERROR )
 		return
 	
 	var users = await NakamaManager.client.list_group_users_async(NakamaManager.session,selectedGroup.id, UserState.JoinRequest)
@@ -340,7 +293,7 @@ func _on_list_groups_button_down():
 	print("\ngroups: ", result.groups,"\n")
 	
 	if result.groups.size() == 0:
-		notification_container.create_notification("O grupo \"%s\" não existe!" % group_query.text.strip_edges(), NotificationContainer.NotificationType.ERROR )
+		NotificationContainer.create_notification("O grupo \"%s\" não existe!" % group_query.text.strip_edges(), NotificationContainer.NotificationType.ERROR )
 		return
 	
 	removeMyChildren(groups_query_vbox)
@@ -384,12 +337,12 @@ func _on_promote_user_button_down():
 		var promote_result = await NakamaManager.client.promote_group_users_async(NakamaManager.session, selectedGroup.id, [u.id])
 		
 		if promote_result.is_exception():
-			notification_container.create_notification(promote_result.exception.message,
+			NotificationContainer.create_notification(promote_result.exception.message,
 										  NotificationContainer.NotificationType.ERROR)
 			user_has_been_promoted = false
 	
 	if user_has_been_promoted:
-		notification_container.create_notification("User successfully promoted",
+		NotificationContainer.create_notification("User successfully promoted",
 							  NotificationContainer.NotificationType.OK)
 
 
@@ -402,12 +355,12 @@ func _on_demote_user_button_down():
 		var demote_result = await NakamaManager.client.demote_group_users_async(NakamaManager.session, selectedGroup.id, [u.id])
 		
 		if demote_result.is_exception():
-			notification_container.create_notification(demote_result.exception.message,
+			NotificationContainer.create_notification(demote_result.exception.message,
 										  NotificationContainer.NotificationType.ERROR)
 			user_has_been_demoted = false
 			
 	if user_has_been_demoted:
-		notification_container.create_notification("User successfully demoted",
+		NotificationContainer.create_notification("User successfully demoted",
 							  NotificationContainer.NotificationType.OK)
 
 func _on_kick_user_button_down():
@@ -420,12 +373,12 @@ func _on_kick_user_button_down():
 		var kick_result = await NakamaManager.client.kick_group_users_async(NakamaManager.session, selectedGroup.id, [u.id])
 		
 		if kick_result.is_exception():
-			notification_container.create_notification(kick_result.exception.message,
+			NotificationContainer.create_notification(kick_result.exception.message,
 										  NotificationContainer.NotificationType.ERROR)
 			user_has_been_kicked = false
 			
 	if user_has_been_kicked:
-		notification_container.create_notification("User successfully kicked",
+		NotificationContainer.create_notification("User successfully kicked",
 							  NotificationContainer.NotificationType.OK)
 		_on_groups_available_to_user_item_selected(0)
 
@@ -433,20 +386,20 @@ func _on_leave_group_button_down():
 	var result : NakamaAsyncResult = await NakamaManager.client.leave_group_async(NakamaManager.session, selectedGroup.id)
 	
 	if result.is_exception():
-		notification_container.create_notification("Cannot leave group",
+		NotificationContainer.create_notification("Cannot leave group",
 							  NotificationContainer.NotificationType.ERROR)
 	else:
-		notification_container.create_notification("Successfully left group",
+		NotificationContainer.create_notification("Successfully left group",
 							  NotificationContainer.NotificationType.OK)
 
 func _on_delete_group_button_down():
 	var result : NakamaAsyncResult = await NakamaManager.client.delete_group_async(NakamaManager.session, selectedGroup.id)
 	
 	if result.is_exception():
-		notification_container.create_notification("Cannot delete group",
+		NotificationContainer.create_notification("Cannot delete group",
 							  NotificationContainer.NotificationType.ERROR)
 	else:
-		notification_container.create_notification("Successfully deleted group",
+		NotificationContainer.create_notification("Successfully deleted group",
 							  NotificationContainer.NotificationType.OK)
 
 func _on_group_listing_slider_value_changed(value: int) -> void:
@@ -619,19 +572,19 @@ func onChannelMessage(message : NakamaAPI.ApiChannelMessage):
 		
 		current_conversation.text += display_name + ": " + str(content.message) + "\n"
 		current_conversation.scroll_vertical = current_conversation.text.count("\n")
-		
-	elif content.type == 1 && party == null:
-		
-		channel_message_panel.show()
-		party = {"id" : content.partyID}
-		channel_message_label.text = str(content.message)
+		#
+	#elif content.type == 1 && party == null:
+		#
+		#channel_message_panel.show()
+		#party = {"id" : content.partyID}
+		#channel_message_label.text = str(content.message)
 		
 func _on_submit_chat_button_down():
 	
 	var text : String = chat_text_line_edit.text
 	
 	if text.is_empty():
-		notification_container.create_notification("Erro! Mensagem vazia!",
+		NotificationContainer.create_notification("Erro! Mensagem vazia!",
 												  NotificationContainer.NotificationType.ERROR)
 		return
 	
@@ -757,24 +710,6 @@ func _on_join_direct_chat_button_down():
 
 #endregion
 
-#region Party System
-
-func _on_create_party_button_down():
-	pass
-
-func _on_join_party_yes_button_down():
-	var result = await NakamaManager.socket.join_party_async(party.id)
-	if result.is_exception():
-		print("failed to join party")
-	channel_message_panel.hide()
-	pass # Replace with function body.
-	
-
-func _on_join_party_no_button_down():
-	channel_message_panel.hide()
-	pass # Replace with function body.
-
-#endregion
 
 #region RPC TRADE SYSTEM
 func _on_ping_rpc_button_down():
@@ -950,3 +885,19 @@ func _on_close_open_group_pressed() -> void:
 	await NakamaManager.client.update_group_async(NakamaManager.session, selectedGroup.id, null, null, null, null, close_open_group.button_pressed)
 	
 	_update_close_group_text(close_open_group.button_pressed)
+
+func _on_user_information_display_invite_friend_to_party(id: String, username: String) -> void:
+
+	var party_id : String = NakamaManager.get_party_id()
+
+	if NakamaManager.is_in_party():
+		party.create_party()
+		party_id = NakamaManager.get_party_id()
+		
+	var content = {
+		"message": "Hey %s, wanna join the party?" % [username],
+		party_id : party_id,
+	}
+	#var channel = await socket.join_chat_async(id, NakamaSocket.ChannelType.DirectMessage)
+	#var message_ack = await socket.write_chat_message_async(channel.id, content)
+##	

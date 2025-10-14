@@ -19,7 +19,7 @@ config/icon="res://icon.svg"
 Nakama="*res://addons/com.heroiclabs.nakama/Nakama.gd"
 NakamaManager="*res://Nakama/NakamaManager.tscn"
 BetterTerrain="*res://addons/better-terrain/BetterTerrain.gd"
-GuguGlobal="*res://Teste/GuguGlobal.gd"
+NotificationContainer="*res://NotificationContainer/NotificationContainer.tscn"
 
 [display]
 

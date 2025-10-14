@@ -1,20 +1,6 @@
-[gd_scene load_steps=3 format=3 uid="uid://bt7i7jg8un7h0"]
+[gd_scene load_steps=2 format=3 uid="uid://bt7i7jg8un7h0"]
 
 [ext_resource type="Script" uid="uid://wpi81wo6ee7m" path="res://Nakama/NakamaManager.gd" id="1_2fvo7"]
-[ext_resource type="PackedScene" uid="uid://bg6xgsfypi4gr" path="res://NotificationContainer/NotificationContainer.tscn" id="2_wclt1"]
 
 [node name="NakamaManager" type="Node"]
 script = ExtResource("1_2fvo7")
-
-[node name="NotificationContainer" parent="." instance=ExtResource("2_wclt1")]
-z_index = 1
-custom_minimum_size = Vector2(250, 0)
-anchors_preset = 3
-anchor_left = 1.0
-anchor_top = 1.0
-anchor_right = 1.0
-anchor_bottom = 1.0
-offset_left = -250.0
-grow_horizontal = 0
-grow_vertical = 0
-size_flags_vertical = 8

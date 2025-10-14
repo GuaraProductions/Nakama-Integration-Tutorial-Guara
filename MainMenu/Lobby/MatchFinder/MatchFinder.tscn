@@ -1,7 +1,7 @@
 [gd_scene load_steps=4 format=3 uid="uid://ctlppxshfqr7i"]
 
-[ext_resource type="Script" uid="uid://cigwov7t2y0qe" path="res://Lobby/MatchFinder/MatchFinder.gd" id="1_ub7sj"]
-[ext_resource type="PackedScene" uid="uid://lowp636hjckg" path="res://Lobby/MatchFinder/MapSelector.tscn" id="2_ii3i2"]
+[ext_resource type="Script" uid="uid://cigwov7t2y0qe" path="res://MainMenu/Lobby/MatchFinder/MatchFinder.gd" id="1_ub7sj"]
+[ext_resource type="PackedScene" uid="uid://lowp636hjckg" path="res://MainMenu/Lobby/MatchFinder/MapSelector.tscn" id="2_ii3i2"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_bsanu"]
 content_margin_left = 15.0
@@ -132,11 +132,6 @@ unique_name_in_owner = true
 layout_mode = 2
 text = "Start Game"
 
-[node name="Ping" type="Button" parent="VBoxContainer/ScrollContainer/YourMatchInfo"]
-layout_mode = 2
-size_flags_horizontal = 3
-text = "Ping"
-
 [node name="Close_Quit" type="Button" parent="VBoxContainer/ScrollContainer/YourMatchInfo"]
 layout_mode = 2
 size_flags_horizontal = 3
@@ -146,5 +141,4 @@ text = "Close/Quit Match"
 [connection signal="pressed" from="VBoxContainer/MatchmakingFinder/MatchmakingButton" to="." method="_on_matchmaking_button_down"]
 [connection signal="map_selected" from="VBoxContainer/ScrollContainer/YourMatchInfo/MapSelectionVbox/MapSelector" to="." method="_on_map_selector_map_selected"]
 [connection signal="pressed" from="VBoxContainer/ScrollContainer/YourMatchInfo/StartGameButton" to="." method="_on_start_game"]
-[connection signal="pressed" from="VBoxContainer/ScrollContainer/YourMatchInfo/Ping" to="." method="_on_ping_button_down"]
 [connection signal="pressed" from="VBoxContainer/ScrollContainer/YourMatchInfo/Close_Quit" to="." method="_on_close_quit_match_pressed"]

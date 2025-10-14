@@ -1,7 +1,7 @@
-[gd_scene load_steps=5 format=3 uid="uid://bt0llee0anwkk"]
+[gd_scene load_steps=5 format=3 uid="uid://dfq85wky0ibpc"]
 
-[ext_resource type="Script" uid="uid://bd320xu5xgu7q" path="res://Lobby/Friends/FriendsList/FriendsList.gd" id="1_tucqs"]
-[ext_resource type="PackedScene" uid="uid://c25altqf87k2j" path="res://Lobby/Friends/FriendHBoxContainer/FriendHBoxContainer.tscn" id="2_rwe42"]
+[ext_resource type="Script" uid="uid://bno2pwxdom87v" path="res://MainMenu/Lobby/Friends/GroupsList/GroupsList.gd" id="1_okhtm"]
+[ext_resource type="PackedScene" uid="uid://ka3pmbwfs0ei" path="res://MainMenu/Lobby/Friends/GroupButton/GroupButton.tscn" id="2_ve4n6"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_tmgb8"]
 content_margin_left = 7.0
@@ -25,7 +25,7 @@ corner_radius_top_right = 15
 corner_radius_bottom_right = 15
 corner_radius_bottom_left = 15
 
-[node name="FriendsBox" type="PanelContainer"]
+[node name="Groups" type="PanelContainer"]
 custom_minimum_size = Vector2(250, 0)
 anchors_preset = 9
 anchor_bottom = 1.0
@@ -33,39 +33,49 @@ offset_right = 166.0
 grow_vertical = 2
 size_flags_horizontal = 3
 theme_override_styles/panel = SubResource("StyleBoxFlat_tmgb8")
-script = ExtResource("1_tucqs")
-friends_packed_scene = ExtResource("2_rwe42")
+script = ExtResource("1_okhtm")
+groups_packed_scene = ExtResource("2_ve4n6")
 
 [node name="VBox" type="VBoxContainer" parent="."]
 layout_mode = 2
 
-[node name="HBoxContainer" type="HBoxContainer" parent="VBox"]
-layout_mode = 2
-
-[node name="AddFriendText" type="LineEdit" parent="VBox/HBoxContainer"]
+[node name="SearchGroup" type="LineEdit" parent="VBox"]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
-placeholder_text = "Friend's name"
+placeholder_text = "Group's name"
 alignment = 1
-
-[node name="AddFriend" type="Button" parent="VBox/HBoxContainer"]
-unique_name_in_owner = true
-layout_mode = 2
-text = "+"
 
 [node name="Panel" type="PanelContainer" parent="VBox"]
 layout_mode = 2
 size_flags_vertical = 3
 theme_override_styles/panel = SubResource("StyleBoxFlat_u303v")
 
-[node name="ScrollContainer" type="ScrollContainer" parent="VBox/Panel"]
+[node name="_" type="VBoxContainer" parent="VBox/Panel"]
 layout_mode = 2
 
-[node name="FriendsContainer" type="VBoxContainer" parent="VBox/Panel/ScrollContainer"]
+[node name="_" type="ScrollContainer" parent="VBox/Panel/_"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="GroupsContainer" type="VBoxContainer" parent="VBox/Panel/_/_"]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 
-[connection signal="pressed" from="VBox/HBoxContainer/AddFriend" to="." method="_on_add_friend_pressed"]
+[node name="AddGroup" type="HBoxContainer" parent="VBox/Panel/_"]
+layout_mode = 2
+
+[node name="AddGroupLineEdit" type="LineEdit" parent="VBox/Panel/_/AddGroup"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+placeholder_text = "Add group"
+
+[node name="AddGroup" type="Button" parent="VBox/Panel/_/AddGroup"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "+"
+
+[connection signal="pressed" from="VBox/Panel/_/AddGroup/AddGroup" to="." method="_on_add_friend_pressed"]

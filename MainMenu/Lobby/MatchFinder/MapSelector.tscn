@@ -1,7 +1,7 @@
 [gd_scene load_steps=3 format=3 uid="uid://lowp636hjckg"]
 
-[ext_resource type="Script" uid="uid://d0tydf1aeocjc" path="res://Lobby/MatchFinder/MapSelector.gd" id="1_0jqs4"]
-[ext_resource type="PackedScene" uid="uid://hvsilsjx00kd" path="res://Lobby/MatchFinder/MapIcon.tscn" id="2_3t4f3"]
+[ext_resource type="Script" uid="uid://d0tydf1aeocjc" path="res://MainMenu/Lobby/MatchFinder/MapSelector.gd" id="1_0jqs4"]
+[ext_resource type="PackedScene" uid="uid://hvsilsjx00kd" path="res://MainMenu/Lobby/MatchFinder/MapIcon.tscn" id="2_3t4f3"]
 
 [node name="MapSelector" type="ScrollContainer"]
 custom_minimum_size = Vector2(200, 200)

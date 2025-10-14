@@ -41,6 +41,18 @@ func _ready() -> void:
 	else:
 		print("não sou o server")
 
+func cleanup_multiplayer():
+	"""Call this before freeing the level to properly cleanup multiplayer nodes"""
+	var players = get_tree().get_nodes_in_group(Player.GROUP_NAME)
+	
+	for player in players:
+		if player.has_method("set_multiplayer_authority"):
+			player.set_multiplayer_authority(1, false)
+		
+		var sync = player.get_node_or_null("MultiplayerSynchronizer")
+		if sync:
+			sync.enabled = false
+
 func _spawn_debug_player() -> void:
 	var instancedPlayer = playerScene.instantiate()
 	instancedPlayer.name = "Player"
@@ -57,8 +69,9 @@ func _spawn_player(data: Dictionary) -> void:
 	instancedPlayer.global_position = spawnpoints[data.index].global_position
 
 	add_child(instancedPlayer)
-	
+	instancedPlayer.set_multiplayer_authority(data.id)
 	if _is_authority(data.id):
+		
 		instancedPlayer.setup_camera(camera)
 		
 func _is_authority(user_id: int) -> bool:

@@ -29,8 +29,10 @@ func _player_finished() -> void:
 	match_ended = true
 	
 	main_menu.visible = true
-	multiplayer_scene_instance.queue_free()
-	multiplayer_scene_instance = null
+	
+	if multiplayer_scene_instance:
+		multiplayer_scene_instance.queue_free()
+		multiplayer_scene_instance = null
 	
 	if multiplayer.is_server():
 		main_menu.match_ended(winner_id)

@@ -1,6 +1,6 @@
 [gd_scene load_steps=2 format=3 uid="uid://c25altqf87k2j"]
 
-[ext_resource type="Script" uid="uid://c67ox75qw64tx" path="res://Lobby/Friends/FriendHBoxContainer/FriendHBoxContainer.gd" id="1_xe2aw"]
+[ext_resource type="Script" uid="uid://c67ox75qw64tx" path="res://MainMenu/Lobby/Friends/FriendHBoxContainer/FriendHBoxContainer.gd" id="1_xe2aw"]
 
 [node name="FriendHBoxContainer" type="PanelContainer"]
 anchors_preset = 10

@@ -1,6 +1,6 @@
 [gd_scene load_steps=2 format=3 uid="uid://hvsilsjx00kd"]
 
-[ext_resource type="Script" uid="uid://cmmwnemc3r6nd" path="res://Lobby/MatchFinder/MapIcon.gd" id="1_k3yrh"]
+[ext_resource type="Script" uid="uid://cmmwnemc3r6nd" path="res://MainMenu/Lobby/MatchFinder/MapIcon.gd" id="1_k3yrh"]
 
 [node name="MapIcon" type="PanelContainer"]
 custom_minimum_size = Vector2(200, 0)

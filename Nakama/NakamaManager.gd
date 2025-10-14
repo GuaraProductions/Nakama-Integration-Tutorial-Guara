@@ -18,8 +18,6 @@ var Players = {}
 
 @export var max_party_count : int
 
-@onready var notification_container: NotificationContainer = $NotificationContainer
-
 var session : NakamaSession # this is the session
 var client : NakamaClient # this is the client {session}
 var socket : NakamaSocket # connection to nakama
@@ -39,10 +37,10 @@ func register(email: String, password: String, username: String) -> void:
 	session = await client.authenticate_email_async(email , password, null, true)
 
 	if NakamaManager.session.is_valid():
-		notification_container.create_notification("Registrado com sucesso!")
+		NotificationContainer.create_notification("Registrado com sucesso!")
 	elif NakamaManager.session.is_exception():
 		var exception : NakamaException = NakamaManager.session.get_exception()
-		notification_container.handle_exception(exception.status_code)
+		NotificationContainer.handle_exception(exception.status_code)
 		
 	await client.update_account_async(session, null, username)
 	
@@ -59,10 +57,10 @@ func login(email: String, password: String) -> void:
 	session = await client.authenticate_email_async(email , password, null, false)
 	
 	if session.is_valid():
-		notification_container.create_notification("Logado com sucesso!")
+		NotificationContainer.create_notification("Logado com sucesso!")
 	elif session.is_exception():
 		var exception : NakamaException = session.get_exception()
-		notification_container.handle_exception(exception.status_code)
+		NotificationContainer.handle_exception(exception.status_code)
 		
 	var users = await client.get_users_async(session, [session.user_id])
 	
@@ -101,8 +99,16 @@ func start_socket() -> void:
 func is_authority() -> bool:
 	return multiplayer.get_unique_id() == 1
 
-func create_party(is_open: bool) -> void:
+func is_in_party() -> bool:
+	return party != null
+
+func create_party(is_open: bool) -> NakamaRTAPI.Party:
 	party = await socket.create_party_async(is_open, max_party_count)
+	
+	return party
+
+func get_party_id() -> String:
+	return party.party_id if party else ""
 
 func invite_friend_to_party(friend: NakamaAPI.ApiUser):
 	var channel = await socket.join_chat_async(friend.id, NakamaSocket.ChannelType.DirectMessage)
@@ -189,7 +195,7 @@ func _received_notification(p_notification: NakamaAPI.ApiNotification) -> void:
 	var notification_type = \
 	 NotificationContainer.nakama_notification_code_to_notification(p_notification.code)
 	
-	notification_container.create_notification(
+	NotificationContainer.create_notification(
 		p_notification.subject,
 		notification_type
 	)
@@ -262,6 +268,10 @@ func update_account(username = null,
 									  location, 
 									  timezone)
 
+func leave_group(id: String) -> NakamaAsyncResult:
+	return await client.leave_group(session, id)
+	
+
 func write_leaderboard(leaderboard_name: String,
 					   score: float,
 					   subscore: float,
@@ -274,3 +284,4 @@ func write_leaderboard(leaderboard_name: String,
 	
 func is_match_created_by_user(created_match : NakamaRTAPI.Match) -> bool:
 	return created_match.presences[0].user_id == current_user.id
+	

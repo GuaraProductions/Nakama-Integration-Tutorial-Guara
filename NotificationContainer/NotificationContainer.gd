@@ -1,5 +1,4 @@
 extends VBoxContainer
-class_name NotificationContainer
 
 enum NakamaExceptionError {
 	SERVER_ERROR = 13
@@ -36,10 +35,10 @@ func handle_exception(status_code: int) -> void:
 		match status_code:
 			NakamaExceptionError.SERVER_ERROR:
 				create_notification("Falhou a conexão ao servidor!",
-									NotificationContainer.NotificationType.ERROR)
+									NotificationType.ERROR)
 			_:
 				create_notification("Erro credenciais incorretas!",
-									NotificationContainer.NotificationType.ERROR)
+									NotificationType.ERROR)
 
 static func nakama_notification_code_to_notification(nakama_code: int) -> NotificationType:
 	

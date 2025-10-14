@@ -42,10 +42,6 @@ func _update_players_confirmed() -> void:
 	confirmation_progress_bar.value = confirmed_players
 	confirmation_progress_bar.max_value = num_players
 
-func _on_ping_button_down():
-	var data = {"hello" : "world"}
-	NakamaManager.socket.send_match_state_async(createdMatch.match_id, 1, JSON.stringify(data))
-
 func _on_join_create_match_button_down():
 	
 	var match_name_query : String = match_name_field.text.strip_edges()
@@ -153,7 +149,7 @@ func _add_player_to_current_matchmaking(display_name: String) -> void:
 	
 	var label : Label = Label.new()
 	label.name = display_name
-	label.text = display_name
+	label.text = display_name + "🔴"
 	
 	matchmaking_players.add_child(label)
 
@@ -174,6 +170,7 @@ func _on_matchmaking_button_down():
 		matchmaking_button.text = tr("Start Matchmaking")
 		matchmakingTicket = null
 	else:
+		
 		#var query = "+properties.region:US +properties.rank:>=4 +properties.rank:<=10"
 		#var stringP = {"region" : "US"}
 		#var numberP = { "rank": 6}

@@ -1,8 +1,9 @@
-[gd_scene load_steps=7 format=3 uid="uid://cvedwg86rsyp2"]
+[gd_scene load_steps=8 format=3 uid="uid://cvedwg86rsyp2"]
 
-[ext_resource type="Script" uid="uid://c3sqlq6m122n3" path="res://Lobby/UserInformationDisplay/UserInformationDisplay.gd" id="1_gldpw"]
+[ext_resource type="Script" uid="uid://c3sqlq6m122n3" path="res://MainMenu/Lobby/UserInformationDisplay/UserInformationDisplay.gd" id="1_gldpw"]
 [ext_resource type="StyleBox" uid="uid://dqy54jim8vxkk" path="res://Styles/DarkBackgroundLabel.tres" id="1_k82p0"]
-[ext_resource type="PackedScene" uid="uid://bt0llee0anwkk" path="res://Lobby/Friends/FriendsList/FriendsList.tscn" id="3_b2vub"]
+[ext_resource type="PackedScene" uid="uid://bt0llee0anwkk" path="res://MainMenu/Lobby/Friends/FriendsList/FriendsList.tscn" id="3_b2vub"]
+[ext_resource type="PackedScene" uid="uid://dfq85wky0ibpc" path="res://MainMenu/Lobby/Friends/GroupsList/GroupsList.tscn" id="4_om642"]
 
 [sub_resource type="Theme" id="Theme_1nxb0"]
 Label/font_sizes/font_size = 12
@@ -23,8 +24,10 @@ shadow_size = 7
 font_size = 18
 
 [node name="UserInformationDisplay" type="PanelContainer"]
-offset_right = 306.0
-offset_bottom = 139.0
+anchors_preset = 9
+anchor_bottom = 1.0
+offset_right = 357.0
+grow_vertical = 2
 size_flags_vertical = 3
 theme = SubResource("Theme_1nxb0")
 theme_override_styles/panel = SubResource("StyleBoxFlat_pcwbd")
@@ -90,14 +93,23 @@ text = "Copy"
 [node name="Tabs" type="TabContainer" parent="VBox"]
 layout_mode = 2
 size_flags_vertical = 3
-current_tab = 0
+current_tab = 1
 
 [node name="Friends" parent="VBox/Tabs" instance=ExtResource("3_b2vub")]
 unique_name_in_owner = true
+visible = false
 layout_mode = 2
 size_flags_vertical = 3
 metadata/_tab_index = 0
 
+[node name="Groups" parent="VBox/Tabs" instance=ExtResource("4_om642")]
+layout_mode = 2
+metadata/_tab_index = 1
+
 [connection signal="pressed" from="VBox/HBox/Button" to="." method="_on_button_pressed"]
 [connection signal="pressed" from="VBox/Grid/CopyUser" to="." method="_on_copy_user_pressed"]
 [connection signal="pressed" from="VBox/Grid/CopyEmail" to="." method="_on_copy_email_pressed"]
+[connection signal="chat_with_player" from="VBox/Tabs/Friends" to="." method="_on_friends_chat_with_player"]
+[connection signal="invite_friend_to_party" from="VBox/Tabs/Friends" to="." method="_on_friends_invite_friend_to_party"]
+[connection signal="trade_with" from="VBox/Tabs/Friends" to="." method="_on_friends_trade_with"]
+[connection signal="player_wants_to_chat_with_group" from="VBox/Tabs/Groups" to="." method="_on_groups_player_wants_to_chat_with_group"]

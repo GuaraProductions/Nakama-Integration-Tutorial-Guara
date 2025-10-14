@@ -1,0 +1,64 @@
+[gd_scene load_steps=2 format=3 uid="uid://bdw5y4b5om737"]
+
+[ext_resource type="Script" uid="uid://cfqnrcgo6yhft" path="res://MainMenu/Lobby/Party/PartyScreen.gd" id="1_743ye"]
+
+[node name="PartyScreen" type="PanelContainer"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_743ye")
+metadata/_tab_index = 5
+
+[node name="_" type="VBoxContainer" parent="."]
+layout_mode = 2
+
+[node name="PartyCreator" type="PanelContainer" parent="_"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="_" type="VBoxContainer" parent="_/PartyCreator"]
+layout_mode = 2
+
+[node name="Title" type="Label" parent="_/PartyCreator/_"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 48
+text = "Create Party"
+
+[node name="PartyIsOpenCheckBox" type="CheckBox" parent="_/PartyCreator/_"]
+unique_name_in_owner = true
+layout_mode = 2
+text = " Party is open"
+
+[node name="CreatePartyButton" type="Button" parent="_/PartyCreator/_"]
+layout_mode = 2
+text = "Create Party"
+
+[node name="PartyInformation" type="PanelContainer" parent="_"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="_" type="VBoxContainer" parent="_/PartyInformation"]
+layout_mode = 2
+
+[node name="Title" type="Label" parent="_/PartyInformation/_"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 48
+text = "Your Party"
+
+[node name="PartyIDField" type="HBoxContainer" parent="_/PartyInformation/_"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="_/PartyInformation/_/PartyIDField"]
+layout_mode = 2
+text = "Party ID: "
+
+[node name="PartyIDLineEdit" type="LineEdit" parent="_/PartyInformation/_/PartyIDField"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+editable = false
+
+[connection signal="pressed" from="_/PartyCreator/_/PartyIsOpenCheckBox" to="." method="_on_party_is_open_check_box_pressed"]
+[connection signal="pressed" from="_/PartyCreator/_/CreatePartyButton" to="." method="_on_create_party_button_pressed"]
