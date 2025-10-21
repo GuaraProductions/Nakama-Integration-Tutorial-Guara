@@ -1,12 +1,14 @@
-[gd_scene load_steps=13 format=3 uid="uid://p2ptqa1u1n1k"]
+[gd_scene load_steps=15 format=3 uid="uid://p2ptqa1u1n1k"]
 
 [ext_resource type="Script" uid="uid://bkso6trqnr35v" path="res://MainMenu/MainMenu.gd" id="1_mtcsr"]
 [ext_resource type="PackedScene" uid="uid://ctlppxshfqr7i" path="res://MainMenu/Lobby/MatchFinder/MatchFinder.tscn" id="2_bsanu"]
 [ext_resource type="PackedScene" uid="uid://cvedwg86rsyp2" path="res://MainMenu/Lobby/UserInformationDisplay/UserInformationDisplay.tscn" id="2_qmkq0"]
 [ext_resource type="PackedScene" uid="uid://cu2rcrnq0w6n5" path="res://MainMenu/Lobby/Leaderboard/Leaderboard.tscn" id="3_kftou"]
 [ext_resource type="PackedScene" uid="uid://bdw5y4b5om737" path="res://MainMenu/Lobby/Party/PartyScreen.tscn" id="3_nre7b"]
+[ext_resource type="PackedScene" uid="uid://ddsbx05whfylu" path="res://MainMenu/Lobby/Chat/ChatTab.tscn" id="3_nxm3p"]
 [ext_resource type="PackedScene" uid="uid://dd2ekb3yor3hh" path="res://MainMenu/Authentication/LoginPanel/LoginPanel.tscn" id="4_4xlfs"]
 [ext_resource type="PackedScene" uid="uid://xq36w5vrpfwb" path="res://MainMenu/Authentication/RegisterPanel/RegisterPanel.tscn" id="5_wys0s"]
+[ext_resource type="PackedScene" uid="uid://wm1fd83jgjwp" path="res://MainMenu/Lobby/Notifications/Notifications.tscn" id="6_nxm3p"]
 [ext_resource type="PackedScene" uid="uid://32gcwea4fq4t" path="res://Popup/Message/PopupBox.tscn" id="7_tv77q"]
 [ext_resource type="PackedScene" uid="uid://cx38uabenhpce" path="res://Popup/JoinGroupChat/JoinGroupChat.tscn" id="8_ltd8p"]
 
@@ -47,7 +49,7 @@ layout_mode = 2
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
-current_tab = 5
+current_tab = 4
 
 [node name="Match Finder" parent="HBox/LobbyContainer" instance=ExtResource("2_bsanu")]
 unique_name_in_owner = true
@@ -445,73 +447,23 @@ layout_mode = 2
 size_flags_horizontal = 3
 text = "Delete Group"
 
-[node name="Chat" type="PanelContainer" parent="HBox/LobbyContainer"]
-visible = false
-layout_mode = 2
-metadata/_tab_index = 4
-
-[node name="VBoxContainer" type="VBoxContainer" parent="HBox/LobbyContainer/Chat"]
-layout_mode = 2
-
-[node name="ChatName" type="LineEdit" parent="HBox/LobbyContainer/Chat/VBoxContainer"]
-unique_name_in_owner = true
-visible = false
-layout_mode = 2
-placeholder_text = "Chat Name"
-
-[node name="HBoxContainer" type="HBoxContainer" parent="HBox/LobbyContainer/Chat/VBoxContainer"]
-layout_mode = 2
-
-[node name="CreateChatRoom" type="Button" parent="HBox/LobbyContainer/Chat/VBoxContainer/HBoxContainer"]
-layout_mode = 2
-size_flags_horizontal = 3
-text = "Create Chat room"
-
-[node name="JoinGroupChatRoom" type="Button" parent="HBox/LobbyContainer/Chat/VBoxContainer/HBoxContainer"]
-layout_mode = 2
-size_flags_horizontal = 3
-text = "Join Group Chat"
-
-[node name="JoinDirectChat" type="Button" parent="HBox/LobbyContainer/Chat/VBoxContainer"]
-layout_mode = 2
-text = "Join Direct Chat"
-
-[node name="Chat" type="PanelContainer" parent="HBox/LobbyContainer/Chat/VBoxContainer"]
-layout_mode = 2
-size_flags_vertical = 3
-
-[node name="VBoxContainer" type="VBoxContainer" parent="HBox/LobbyContainer/Chat/VBoxContainer/Chat"]
-layout_mode = 2
-
-[node name="UsernameContainer" type="TabContainer" parent="HBox/LobbyContainer/Chat/VBoxContainer/Chat/VBoxContainer"]
+[node name="ChatTab" parent="HBox/LobbyContainer" instance=ExtResource("3_nxm3p")]
 unique_name_in_owner = true
 layout_mode = 2
-size_flags_vertical = 3
-current_tab = 0
-
-[node name="username" type="TextEdit" parent="HBox/LobbyContainer/Chat/VBoxContainer/Chat/VBoxContainer/UsernameContainer"]
-layout_mode = 2
-editable = false
-wrap_mode = 1
-metadata/_tab_index = 0
-
-[node name="ChatTextLineEdit" type="LineEdit" parent="HBox/LobbyContainer/Chat/VBoxContainer/Chat/VBoxContainer"]
-unique_name_in_owner = true
-layout_mode = 2
-placeholder_text = "Chat Text Here"
-
-[node name="SubmitChat" type="Button" parent="HBox/LobbyContainer/Chat/VBoxContainer/Chat/VBoxContainer"]
-layout_mode = 2
-text = ">"
 
 [node name="Party" parent="HBox/LobbyContainer" instance=ExtResource("3_nre7b")]
 unique_name_in_owner = true
+visible = false
 layout_mode = 2
 
 [node name="Leaderboard" parent="HBox/LobbyContainer" instance=ExtResource("3_kftou")]
 visible = false
 layout_mode = 2
 metadata/_tab_index = 6
+
+[node name="Notifications" parent="HBox/LobbyContainer" instance=ExtResource("6_nxm3p")]
+visible = false
+layout_mode = 2
 
 [node name="UserInformationDisplay" parent="HBox" instance=ExtResource("2_qmkq0")]
 unique_name_in_owner = true
@@ -632,10 +584,6 @@ text = "Join"
 [connection signal="toggled" from="HBox/LobbyContainer/Group Manager/TabContainer/Manage Groups/ScrollContainer/VBoxContainer/CloseOpenGroup" to="." method="_on_close_open_group_toggled"]
 [connection signal="button_down" from="HBox/LobbyContainer/Group Manager/TabContainer/Manage Groups/ScrollContainer/VBoxContainer/LeaveGroup" to="." method="_on_leave_group_button_down"]
 [connection signal="button_down" from="HBox/LobbyContainer/Group Manager/TabContainer/Manage Groups/ScrollContainer/VBoxContainer/DeleteGroup" to="." method="_on_delete_group_button_down"]
-[connection signal="button_down" from="HBox/LobbyContainer/Chat/VBoxContainer/HBoxContainer/CreateChatRoom" to="." method="_on_join_chat_room_button_down"]
-[connection signal="button_down" from="HBox/LobbyContainer/Chat/VBoxContainer/HBoxContainer/JoinGroupChatRoom" to="." method="_on_join_group_chat_room_button_down"]
-[connection signal="button_down" from="HBox/LobbyContainer/Chat/VBoxContainer/JoinDirectChat" to="." method="_on_join_direct_chat_button_down"]
-[connection signal="button_down" from="HBox/LobbyContainer/Chat/VBoxContainer/Chat/VBoxContainer/SubmitChat" to="." method="_on_submit_chat_button_down"]
 [connection signal="invite_friend_to_party" from="HBox/UserInformationDisplay" to="." method="_on_user_information_display_invite_friend_to_party"]
 [connection signal="login" from="Authentication/Tabs/Login" to="." method="_on_login_pressed"]
 [connection signal="register_account" from="Authentication/Tabs/Register" to="." method="_on_register_account_pressed"]

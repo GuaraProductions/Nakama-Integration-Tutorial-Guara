@@ -1,0 +1,41 @@
+[gd_scene load_steps=3 format=3 uid="uid://wm1fd83jgjwp"]
+
+[ext_resource type="Script" uid="uid://dye86sse5fh3c" path="res://MainMenu/Lobby/Notifications/Notifications.gd" id="1_mcsnq"]
+[ext_resource type="PackedScene" uid="uid://bq6b5e7e6whsj" path="res://MainMenu/Lobby/Notifications/NotificationBubble.tscn" id="2_glg2d"]
+
+[node name="Notifications" type="PanelContainer"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_mcsnq")
+notification_bubble_scene = ExtResource("2_glg2d")
+metadata/_tab_index = 7
+
+[node name="_" type="VBoxContainer" parent="."]
+layout_mode = 2
+
+[node name="TopBar" type="HBoxContainer" parent="_"]
+layout_mode = 2
+
+[node name="Title" type="Label" parent="_/TopBar"]
+layout_mode = 2
+text = "Notifications"
+
+[node name="DeleteNotifications" type="Button" parent="_/TopBar"]
+layout_mode = 2
+size_flags_horizontal = 10
+text = "Deletar Notificações"
+
+[node name="ScrollContainer" type="ScrollContainer" parent="_"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="NotificationsVContainer" type="VBoxContainer" parent="_/ScrollContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[connection signal="pressed" from="_/TopBar/DeleteNotifications" to="." method="delete_all_notifications"]

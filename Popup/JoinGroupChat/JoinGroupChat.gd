@@ -9,13 +9,8 @@ func _on_about_to_popup() -> void:
 	
 	groups_available.clear()
 	
-	var parent = get_parent()
-	
-	var client = parent.client
-	var session = parent.session
-	var current_user = parent.current_user
-	
-	var result = await client.list_user_groups_async(session, current_user.id)
+	var result = \
+	 await NakamaManager.client.list_user_groups_async(NakamaManager.session, NakamaManager.current_user.id)
 	
 	available_groups_to_current_user = result.user_groups
 	

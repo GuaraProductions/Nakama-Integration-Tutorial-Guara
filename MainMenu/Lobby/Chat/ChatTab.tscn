@@ -1,0 +1,50 @@
+[gd_scene load_steps=2 format=3 uid="uid://ddsbx05whfylu"]
+
+[ext_resource type="Script" uid="uid://c4qs6u7qv8wmf" path="res://MainMenu/Lobby/Chat/Chat.gd" id="1_8exd6"]
+
+[node name="Chat" type="PanelContainer"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_8exd6")
+metadata/_tab_index = 4
+
+[node name="VBoxContainer" type="VBoxContainer" parent="."]
+layout_mode = 2
+
+[node name="Chat" type="PanelContainer" parent="VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="VBoxContainer" type="VBoxContainer" parent="VBoxContainer/Chat"]
+layout_mode = 2
+
+[node name="ScrollContainer" type="ScrollContainer" parent="VBoxContainer/Chat/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="UsernameContainer" type="TabContainer" parent="VBoxContainer/Chat/VBoxContainer/ScrollContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+current_tab = 0
+
+[node name="username" type="RichTextLabel" parent="VBoxContainer/Chat/VBoxContainer/ScrollContainer/UsernameContainer"]
+layout_mode = 2
+bbcode_enabled = true
+fit_content = true
+metadata/_tab_index = 0
+
+[node name="ChatTextLineEdit" type="LineEdit" parent="VBoxContainer/Chat/VBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+placeholder_text = "Chat Text Here"
+
+[node name="SubmitChat" type="Button" parent="VBoxContainer/Chat/VBoxContainer"]
+layout_mode = 2
+text = ">"
+
+[connection signal="meta_clicked" from="VBoxContainer/Chat/VBoxContainer/ScrollContainer/UsernameContainer/username" to="." method="_on_username_meta_clicked"]

@@ -5572,6 +5572,8 @@ class ApiClient extends RefCounted:
 		var content : PackedByteArray
 
 		var result = await _http_adapter.send_async(method, uri, headers, content)
+
+		
 		if result is NakamaException:
 			return NakamaAsyncResult.new(result)
 		return NakamaAsyncResult.new()

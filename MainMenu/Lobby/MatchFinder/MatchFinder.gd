@@ -149,7 +149,7 @@ func _add_player_to_current_matchmaking(display_name: String) -> void:
 	
 	var label : Label = Label.new()
 	label.name = display_name
-	label.text = display_name + "🔴"
+	label.text = display_name
 	
 	matchmaking_players.add_child(label)
 

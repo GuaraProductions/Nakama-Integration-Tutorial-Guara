@@ -10,11 +10,6 @@ enum UserState {
 }
 var selectedGroup
 var selectedGroupState : UserState
-var currentChannel
-var chatChannels := {}
-
-var players_username_display_name = {}
-var group_chats = {}
 
 
 
@@ -25,14 +20,12 @@ signal OnStartGame()
 
 @onready var lobby_container : TabContainer = %LobbyContainer
 @onready var authentication : CenterContainer = $Authentication
+@onready var chat_tab: PanelContainer = %ChatTab
 
 @onready var group_name : LineEdit = %GroupName
 @onready var group_desc : LineEdit = %GroupDesc
 @onready var group_query : LineEdit = %GroupQuery
 @onready var groups_query_vbox : VBoxContainer = %GroupsQueryVBox
-@onready var chat_name : LineEdit = %ChatName
-@onready var username_container : TabContainer = %UsernameContainer
-@onready var chat_text_line_edit : LineEdit = %ChatTextLineEdit
 @onready var trade_vbox1 : VBoxContainer = %TradeVbox1
 @onready var trade_vbox2 : VBoxContainer = %TradeVBox2
 @onready var popup : Window = $Popup
@@ -56,8 +49,6 @@ signal OnStartGame()
 @onready var key_line_edit: LineEdit = %KeyLineEdit
 @onready var data_from_store_label: Label = %DataFromStoreLabel
 
-@onready var party_is_open_check_box: CheckBox = %PartyIsOpenCheckBox
-
 @onready var match_finder: PanelContainer = %"Match Finder"
 
 func _ready():
@@ -72,7 +63,7 @@ func _ready():
 	user_information_display.visible = false
 
 	var args = OS.get_cmdline_args()
-	
+	print("args: ", args)
 	match_finder.start_game.connect(_on_start_game)
 	
 	if args.size() <= 2:
@@ -134,7 +125,7 @@ func connect_user_to_lobby(email: String = "") -> void:
 	#$Panel/UserAccountText.text = account.user.username
 	#$Panel/DisplayNameText.text = account.user.display_name
 
-	subToFriendChannels()
+	chat_tab.subToFriendChannels()
 	#update_friends_list()
 #endregion
 
@@ -533,184 +524,6 @@ func _on_accept_all_pending_requests_pressed() -> void:
 
 #endregion
 
-#region Chat Room Code
-func _on_join_chat_room_button_down():
-	create_chat_channel(chat_name.text.strip_edges())
-
-func create_chat_channel(chat_name: String) -> void:
-	var type = NakamaSocket.ChannelType.Room
-	currentChannel = await NakamaManager.socket.join_chat_async(chat_name, 
-												  type, 
-												  false, 
-												  false)
-
-## Toda vez que uma nova mensagem for mandada para o servidor
-## essa função será invocada
-func onChannelMessage(message : NakamaAPI.ApiChannelMessage):
-	var content = JSON.parse_string(message.content)
-	if content.type == 0:
-		
-		var chat_id = content.id
-		var display_name : String = ""
-		var current_conversation : TextEdit = null
-		
-		if players_username_display_name.has(chat_id):
-			
-			display_name = players_username_display_name[chat_id]
-			current_conversation = username_container.get_node(display_name)
-		elif group_chats.has(chat_id):
-			
-			var sender_info_json : NakamaAPI.ApiUsers = \
-			 await NakamaManager.client.get_users_async(NakamaManager.session, [message.sender_id])
-			var all_user_info = sender_info_json.serialize()
-			var curr_user = all_user_info.users[0]
-
-			display_name = curr_user.display_name
-			current_conversation = username_container.get_node(group_chats[chat_id])
-		else:
-			return
-		
-		current_conversation.text += display_name + ": " + str(content.message) + "\n"
-		current_conversation.scroll_vertical = current_conversation.text.count("\n")
-		#
-	#elif content.type == 1 && party == null:
-		#
-		#channel_message_panel.show()
-		#party = {"id" : content.partyID}
-		#channel_message_label.text = str(content.message)
-		
-func _on_submit_chat_button_down():
-	
-	var text : String = chat_text_line_edit.text
-	
-	if text.is_empty():
-		NotificationContainer.create_notification("Erro! Mensagem vazia!",
-												  NotificationContainer.NotificationType.ERROR)
-		return
-	
-	#var current_username: String = chatChannels[currentChannel.id].channel.self_presence.username
-	#var current_tab : int = username_container.current_tab
-	var new_message : String = chat_text_line_edit.text.strip_edges()
-	
-	chat_text_line_edit.text = ""
-	
-	print("\n\nchatChannels: ", chatChannels)
-	
-	var id = currentChannel.id
-	
-	if not currentChannel.group_id.is_empty():
-		id = currentChannel.group_id
-	
-	await NakamaManager.socket.write_chat_message_async(currentChannel.id, {
-		 "message" : new_message,
-		"id" : id,
-		"type" : 0
-		})
-	
-func _on_join_group_chat_room_button_down():
-	
-	join_group_popup.popup_centered()
-	
-	var group = await join_group_popup.close_requested
-	
-	if not group:
-		invoke_popup("Erro", "Nenhum grupo selecionado")
-		return
-	
-	var type = NakamaSocket.ChannelType.Group
-	currentChannel = await NakamaManager.socket.join_chat_async(group.id, type, true, false)
-	
-	if currentChannel.is_exception():
-		invoke_popup("Erro", "Não foi possível entrar nesse chat de grupo")
-		return
-
-	var chat_name : String = "%s's Chat" % [group.name]
-	
-	var currentEdit = TextEdit.new()
-	
-	if username_container.has_node(chat_name):
-		invoke_popup("Erro", "Você já está na conversa de grupo")
-		return
-	
-	currentEdit.name = chat_name
-	username_container.add_child(currentEdit)
-	currentEdit.text = await listMessages(currentChannel)
-	
-	if not username_container.tab_changed.is_connected(onChatTabChanged):
-		username_container.tab_changed.connect(onChatTabChanged)
-		
-	print("channel id: " + currentChannel.id)
-	currentChannel.group_id
-	chatChannels[username_container.get_child_count()-1] = {
-		"channel" : currentChannel,
-		"label" : chat_name
-		}
-	group_chats[group.id] = chat_name
-	
-func onChatTabChanged(index: int):
-	
-	if index == 0:
-		currentChannel = null
-		return
-	
-	currentChannel = chatChannels[index].channel
-	
-func listMessages(currentChannel):
-	
-	var result = await  NakamaManager.client.list_channel_messages_async(NakamaManager.session, currentChannel.id, 100, true)
-	var text = ""
-	for message in result.messages:
-		
-		var sender_info_json : NakamaAPI.ApiUsers = await NakamaManager.client.get_users_async(NakamaManager.session, [message.sender_id])
-		var all_user_info = sender_info_json.serialize()
-		#print("user_info: ", user_info.users[0])
-		
-		if message.content != "{}":
-			var content = JSON.parse_string(message.content)
-			var curr_user = all_user_info.users[0]
-			text += curr_user.display_name + ": " + str(content.message) + "\n"
-	return text
-	
-func subToFriendChannels():
-	var result = await NakamaManager.client.list_friends_async(NakamaManager.session)
-	for i in result.friends:
-		var type = NakamaSocket.ChannelType.DirectMessage
-		var channel = await NakamaManager.socket.join_chat_async(i.user.id, type, true, false)
-		
-		# Adicionando uma nova tab de conversa entre jogadores
-		var currentEdit = TextEdit.new()
-		currentEdit.name = i.user.display_name
-		username_container.add_child(currentEdit)
-		players_username_display_name[i.user.username] = i.user.display_name
-		currentEdit.text = await listMessages(channel)
-		
-		if not username_container.tab_changed.is_connected(onChatTabChanged):
-			username_container.tab_changed.connect(onChatTabChanged)
-
-		chatChannels[username_container.get_child_count()-1] = {
-			"channel" : channel,
-			"label" : i.user.username
-		} 
-		
-func _on_join_direct_chat_button_down():
-	var type = NakamaSocket.ChannelType.DirectMessage
-	var usersResult = await  NakamaManager.client.get_users_async(NakamaManager.session, [], [chat_name.text])
-	if usersResult.users.size() > 0:
-		currentChannel = await NakamaManager.socket.join_chat_async(usersResult.users[0].id, type, true, false)
-		
-		print("channel id: " + currentChannel.id)
-		
-		var result = await  NakamaManager.client.list_channel_messages_async(NakamaManager.session, currentChannel.id, 100, true)
-		
-		for message in result.messages:
-			if(message.content != "{}"):
-				var content = JSON.parse_string(message.content)
-			
-				chat_text_line_edit.text += message.username + ": " + str(content.message) + "\n"
-
-#endregion
-
-
 #region RPC TRADE SYSTEM
 func _on_ping_rpc_button_down():
 	var item = {
@@ -887,17 +700,11 @@ func _on_close_open_group_pressed() -> void:
 	_update_close_group_text(close_open_group.button_pressed)
 
 func _on_user_information_display_invite_friend_to_party(id: String, username: String) -> void:
-
+	
 	var party_id : String = NakamaManager.get_party_id()
 
 	if NakamaManager.is_in_party():
 		party.create_party()
 		party_id = NakamaManager.get_party_id()
-		
-	var content = {
-		"message": "Hey %s, wanna join the party?" % [username],
-		party_id : party_id,
-	}
-	#var channel = await socket.join_chat_async(id, NakamaSocket.ChannelType.DirectMessage)
-	#var message_ack = await socket.write_chat_message_async(channel.id, content)
-##	
+	
+	chat_tab.invite_friend(id, username, party_id)
