@@ -124,8 +124,6 @@ func connect_user_to_lobby(email: String = "") -> void:
 	#
 	#$Panel/UserAccountText.text = account.user.username
 	#$Panel/DisplayNameText.text = account.user.display_name
-
-	chat_tab.subToFriendChannels()
 	#update_friends_list()
 #endregion
 

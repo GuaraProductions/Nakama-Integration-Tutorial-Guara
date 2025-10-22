@@ -48,3 +48,4 @@ layout_mode = 2
 text = ">"
 
 [connection signal="meta_clicked" from="VBoxContainer/Chat/VBoxContainer/ScrollContainer/UsernameContainer/username" to="." method="_on_username_meta_clicked"]
+[connection signal="pressed" from="VBoxContainer/Chat/VBoxContainer/SubmitChat" to="." method="_on_submit_chat_button_down"]

@@ -4,6 +4,16 @@ signal user_logged_in()
 signal peer_connnected_in_match(id: int)
 signal peer_disconnnected_in_match(id: int)
 
+# Proxy signals for socket events
+signal notification_received(notif: NakamaAPI.ApiNotification)
+signal channel_message_received(message: NakamaAPI.ApiChannelMessage)
+signal match_presence_received(presence: NakamaRTAPI.MatchPresenceEvent)
+signal match_state_received(state: NakamaRTAPI.MatchData)
+signal party_presence_received(presence: NakamaRTAPI.PartyPresenceEvent)
+signal socket_connected()
+signal socket_closed()
+signal socket_error_received(error)
+
 enum ClientScheme {
 	HTTP,
 	HTTPS
@@ -93,8 +103,6 @@ func start_socket() -> void:
 	setup_multiplayer_bridge()
 	
 	user_logged_in.emit()
-	
-	return session.is_valid()
 
 func is_authority() -> bool:
 	return multiplayer.get_unique_id() == 1
@@ -126,7 +134,7 @@ func onMatchJoin():
 	print("joined Match with id: " + NakamaManager.multiplayerBridge.match_id)
 
 func onMatchPresence(presence : NakamaRTAPI.MatchPresenceEvent):
-	pass
+	match_presence_received.emit(presence)
 
 func onPeerConnected(id: int):
 	print("Peer connected id is : " + str(id))
@@ -167,23 +175,30 @@ func onPeerDisconnected(id):
 	peer_disconnnected_in_match.emit(user, id)
 
 func onMatchState(state : NakamaRTAPI.MatchData):
-	pass
+	match_state_received.emit(state)
 
 func onSocketConnected():
 	print("Socket Connected")
+	socket_connected.emit()
 
 func onSocketClosed():
 	print("Socket Closed")
+	socket_closed.emit()
 
 func onSocketReceivedError(err):
 	print("Socket Error:" + str(err))
+	socket_error_received.emit(err)
 
 func onPartyPresence(presence : NakamaRTAPI.PartyPresenceEvent):
 	print("JOINED PARTY " + presence.party_id)
+	party_presence_received.emit(presence)
 
 func _received_notification(p_notification: NakamaAPI.ApiNotification) -> void:
 	
+	# Emit proxy signal for external listeners
+	notification_received.emit(p_notification)
 	
+	# Also show in notification container
 	var notification_type = \
 	 NotificationContainer.nakama_notification_code_to_notification(p_notification.code)
 	
@@ -195,7 +210,7 @@ func _received_notification(p_notification: NakamaAPI.ApiNotification) -> void:
 ## Toda vez que uma nova mensagem for mandada para o servidor
 ## essa função será invocada
 func onChannelMessage(message : NakamaAPI.ApiChannelMessage) -> void:
-	pass
+	channel_message_received.emit(message)
 	#var content = JSON.parse_string(message.content)
 	#if content.type == 0:
 		#
@@ -896,6 +911,30 @@ func send_event(event_name: String, properties: Dictionary = {}) -> NakamaAsyncR
 ## Returns a NakamaAPI.ApiChannelMessageList containing the channel messages.
 func list_channel_messages(channel_id: String, limit: int = 1, forward: bool = true, cursor = null):
 	return await client.list_channel_messages_async(session, channel_id, limit, forward, cursor)
+
+#endregion
+
+#region Socket Helper Functions
+
+## Check if the socket is connected.
+## [br][br]
+## Returns true if socket exists and is connected, false otherwise.
+func is_socket_connected() -> bool:
+	return socket != null and socket.is_connected_to_host()
+
+## Check if the socket exists (may not be connected yet).
+## [br][br]
+## Returns true if socket has been created, false otherwise.
+func has_socket() -> bool:
+	return socket != null
+
+## Get the current socket connection state.
+## [br][br]
+## Returns the WebSocketPeer state if socket exists, otherwise returns CLOSED state.
+func get_socket_state():
+	if socket and socket.socket:
+		return socket.socket.get_ready_state()
+	return WebSocketPeer.STATE_CLOSED
 
 #endregion
 	

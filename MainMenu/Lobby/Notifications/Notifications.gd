@@ -17,9 +17,10 @@ func _user_logged_in() -> void:
 	# Load notifications when the panel is ready
 	await load_notifications()
 	
-	# Listen for real-time notifications if socket is available
-	if NakamaManager.socket:
-		NakamaManager.socket.received_notification.connect(_on_notification_received)
+	# Listen for real-time notifications through the NakamaManager proxy
+	if NakamaManager.is_socket_connected():
+		NakamaManager.notification_received.connect(_on_notification_received)
+
 ## Load notifications from the server with pagination support
 func load_notifications(limit: int = 100) -> void:
 	var cursor_value = cacheable_cursor if cacheable_cursor != "" else ""
@@ -29,18 +30,31 @@ func load_notifications(limit: int = 100) -> void:
 		print("Failed to load notifications: %s" % result)
 		return
 	
-	# Process the notifications
+	# Collect all unique sender IDs first
+	var sender_ids: Array[String] = []
+	for notif in result.notifications:
+		if notif.sender_id and notif.sender_id != "" and notif.sender_id not in sender_ids:
+			sender_ids.append(notif.sender_id)
+	
+	# Fetch all users in ONE batch request
+	var users_map: Dictionary = {}
+	if sender_ids.size() > 0:
+		var users_result = await NakamaManager.get_users(PackedStringArray(sender_ids))
+		if not users_result.is_exception() and users_result.users:
+			for user in users_result.users:
+				var api_user: NakamaAPI.ApiUser = user
+				users_map[api_user.id] = api_user
+	
+	# Process the notifications (in reverse order to show newest first)
 	for i in range(result.notifications.size() - 1, -1, -1):
-		
 		var notif = result.notifications[i]
-		
-		_add_notification_to_ui(notif)
+		_add_notification_to_ui(notif, users_map)
 	
 	# Update the cursor for pagination
 	if result.cacheable_cursor:
 		cacheable_cursor = result.cacheable_cursor
 	
-	print("Loaded %d notifications" % result.notifications.size())
+	#print("Loaded %d notifications" % result.notifications.size())
 
 ## Load more notifications (for infinite scroll or "Load More" button)
 func load_more_notifications(limit: int = 100) -> void:
@@ -53,28 +67,35 @@ func load_more_notifications(limit: int = 100) -> void:
 ## Handle real-time notification received while connected
 func _on_notification_received(notif: NakamaAPI.ApiNotification) -> void:
 	print("Received notification: %s - %s" % [notif.subject, notif.content])
-	_add_notification_to_ui(notif)
+	# For real-time notifications, fetch user individually (only one user)
+	var users_map: Dictionary = {}
+	if notif.sender_id and notif.sender_id != "":
+		var users_result = await NakamaManager.get_users([notif.sender_id])
+		if not users_result.is_exception() and users_result.users and users_result.users.size() > 0:
+			var api_user: NakamaAPI.ApiUser = users_result.users[0]
+			users_map[api_user.id] = api_user
+	_add_notification_to_ui(notif, users_map)
 
 ## Add a notification to the UI
-func _add_notification_to_ui(notif: NakamaAPI.ApiNotification) -> void:
+func _add_notification_to_ui(notif: NakamaAPI.ApiNotification, users_map: Dictionary = {}) -> void:
 	# Avoid duplicate notifications
 	if notif.id in loaded_notification_ids:
 		return
 	
 	loaded_notification_ids.append(notif.id)
 	
-	_create_notification_item(notif)
+	_create_notification_item(notif, users_map)
 
 ## Create a notification UI element
 ## Override this function to customize how notifications are displayed
-func _create_notification_item(notif: NakamaAPI.ApiNotification) -> void:
+func _create_notification_item(notif: NakamaAPI.ApiNotification, users_map: Dictionary = {}) -> void:
 
 	var notification_bubble_instance : NotificationBubble = notification_bubble_scene.instantiate()
 
 	#delete_button.pressed.connect(_on_delete_notification.bind(notif.id, panel))
 	notifications_v_container.add_child(notification_bubble_instance)
 	
-	notification_bubble_instance.setup(notif)
+	notification_bubble_instance.setup(notif, users_map)
 	notification_bubble_instance.delete_notification.connect(_on_delete_notification.bind(notification_bubble_instance))
 
 
